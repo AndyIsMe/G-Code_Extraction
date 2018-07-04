@@ -31,6 +31,7 @@ Variable fillsInVariableTable(char *linePtrPtr);
 //char getChar(char **line);
 char getChar(char **linePtrPtr,CheckIndex *checkindex);
 int getValue(char **linePtrPtr,CheckIndex *checkindex);
+int getDeci(char **linePtrPtr,CheckIndex *checkindex);
 //char getChar(char **linePtrPtr);
 //int getValue(char **linePtrPtr,int index);
 #endif // _CHECKREGISTER_H

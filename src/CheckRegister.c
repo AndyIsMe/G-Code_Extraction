@@ -6,7 +6,7 @@
 Variable fillsInVariableTable(char *line)
 {
   int i;
-  int value;
+  int value,decimal;
   int index;
   char word;
   Variable v;
@@ -17,27 +17,24 @@ Variable fillsInVariableTable(char *line)
     word = getChar(&line,&CheckIndex);
     line += CheckIndex.index;
     value = getValue(&line,&CheckIndex);
+    // line += CheckIndex.index;
+    if(*line == '.')
+    {
+    decimal = getDeci(&line,&CheckIndex);
+    v.fraction = decimal;
+    }
+    else{
+      v.fraction = 0;
+    }
     v.name = word;
     v.integer = value;
     printf("word : %c\n",v.name);
     printf("integer : %d\n",v.integer);
-
     // printf("%c\n",word);
     // printf("%d\n",value);
   }
   return v;
-    //printf("%s\n",*line);
-    // type = getChar(&line,v);
-    // word = *line+type;
-    // printf("%c\n",*line+0);
-    //value = getValue(&line);
-    // word =
-    // if(isDigit(linePtrPtr+i))
-    // {
-    //   getValue = linePtrPtr+i;
-    // }
-  //printf("%c\n",linePtrPtr+1);
-  //return linePtrPtr;
+
 }
 // int inc(int *i){
 //   (*i)++;
@@ -82,8 +79,10 @@ char getChar(char **linePtrPtr,CheckIndex *checkindex)
 
 int getValue(char **linePtrPtr,CheckIndex *checkindex)
 {
+  Variable v;
+  checkindex->index =0;
   int i=0,j=0;
-  double value;
+  int value,decimal;
   char storenum[20]={0};
   float check;
   if(isAlpha(**linePtrPtr))
@@ -102,20 +101,6 @@ int getValue(char **linePtrPtr,CheckIndex *checkindex)
     *linePtrPtr += 1;
     checkindex->index +=1;
   }
-  // if(isDecimal(**linePtrPtr))
-  // {
-  //   storenum[j] = **linePtrPtr;
-  //   j++;
-  //   *linePtrPtr += 1;
-  //   checkindex->index +=1;
-  //   while(isNumbers(**linePtrPtr))
-  //   {
-  //     storenum[j] = **linePtrPtr;
-  //     j++;
-  //     *linePtrPtr += 1;
-  //     checkindex->index +=1;
-  //   }
-  // }
   value = atoi(storenum);
   return value;
 
@@ -137,4 +122,25 @@ int getValue(char **linePtrPtr,CheckIndex *checkindex)
   //   *linePtrPtr += 1;
   // }
 
+}
+
+int getDeci(char **linePtrPtr,CheckIndex *checkindex)
+{
+  int j=0;
+  int decimal;
+  char storedeci[20]={0};
+  if(isDecimal(**linePtrPtr))
+  {
+    *linePtrPtr += 1;
+    checkindex->index +=1;
+    while(isNumbers(**linePtrPtr))
+    {
+      storedeci[j] = **linePtrPtr;
+      j++;
+      *linePtrPtr += 1;
+      checkindex->index +=1;
+    }
+    decimal = atoi(storedeci);
+    return decimal;
+  }
 }
