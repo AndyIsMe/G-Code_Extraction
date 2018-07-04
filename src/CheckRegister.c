@@ -28,8 +28,8 @@ Variable fillsInVariableTable(char *line)
     }
     v.name = word;
     v.integer = value;
-    printf("word : %c\n",v.name);
-    printf("integer : %d\n",v.integer);
+    // printf("word : %c\n",v.name);
+    // printf("integer : %d\n",v.integer);
     // printf("%c\n",word);
     // printf("%d\n",value);
   }
