@@ -1,19 +1,31 @@
 #include "CheckRegister.h"
 #include "CException.h"
+#include "Exception.h"
 
 
-void fillsInVariableTable(char *line)
+Variable fillsInVariableTable(char *line)
 {
-  int i,value;
-  int type;
+  int i;
+  int value;
+  int index;
   char word;
   Variable v;
+  CheckIndex CheckIndex;
 
-    type = getChar(&line);
-    word = *line+type;
-    value = getValue(&line,type+1);
-    printf("%c\n",word);
-    printf("%d\n",value);
+  for(i=0;i<strlen(line);i++)
+  {
+    word = getChar(&line,&CheckIndex);
+    line += CheckIndex.index;
+    value = getValue(&line,&CheckIndex);
+    v.name = word;
+    v.integer = value;
+    printf("word : %c\n",v.name);
+    printf("integer : %d\n",v.integer);
+
+    // printf("%c\n",word);
+    // printf("%d\n",value);
+  }
+  return v;
     //printf("%s\n",*line);
     // type = getChar(&line,v);
     // word = *line+type;
@@ -36,50 +48,93 @@ void fillsInVariableTable(char *line)
 //   inc(&x)
 //   return 0;
 // }
-int getChar(char **linePtrPtr)
+char getChar(char **linePtrPtr,CheckIndex *checkindex)
 {
   int i=0;
+  //word = *linePtrPtr;
   char word;
-  word = *linePtrPtr;
-    while(isNULL(*linePtrPtr))
-    {
-      i++;
-      linePtrPtr += i;
-    }
-    if(isCharacter(word=*linePtrPtr))
-    {
-      //word = **linePtrPtr+i;
-      return i;
-    }
-  Throw(createException("No identifier found ",NO_IDENTIFIER));
+  if(isEmpty(**linePtrPtr))
+  {
+    *linePtrPtr += 1;
+  }
+  while(isAlpha(**linePtrPtr))
+  {
+        checkindex->index = 1;
+        word = **linePtrPtr;
+        return word;
+  }
+  Throw(createException("No identifier found ",INVALID_IDENTIFIER));
+  //   while(!isEmpty(**linePtrPtr))
+  //   {
+  //   if(isAlpha(**linePtrPtr))
+  //   {
+  //     checkindex->index = i+1;
+  //     word = **linePtrPtr;
+  //     return word;
+  //   }
+  //   else{
+  //     Throw(createException("No identifier found ",NO_IDENTIFIER));
+  //   }
+  //   *linePtrPtr += 1;
+  // }
 
 }
 
-int getValue(char **linePtrPtr,int index)
+int getValue(char **linePtrPtr,CheckIndex *checkindex)
 {
   int i=0,j=0;
-  int value;
-  char word;
-  char storenum[20];
-  while(!isNULL(*linePtrPtr+index)&&!isCharacter(word=*linePtrPtr+index))
+  double value;
+  char storenum[20]={0};
+  float check;
+  if(isAlpha(**linePtrPtr))
   {
-    if(isNumbers(word=*linePtrPtr+index+i))
-    {
-      storenum[j] = *linePtrPtr+i+index;
-      printf("number %d\n",storenum[j]);
-      j++;
-      i++;
-      linePtrPtr+=i;
-    }
-    else
-    {
-      Throw(createException("No integer ",NO_INTEGER));
-    }
-
+     Throw(createException("INVALID_INTEGER ",INVALID_INTEGER));
   }
-        value = atoi(storenum);
-        printf("store num :%d\n",value );
-        return value;
-//   int i,value;
-//   for()
+  if(isEmpty(**linePtrPtr))
+  {
+    *linePtrPtr += 1;
+    checkindex->index += 1;
+  }
+  while(isNumbers(**linePtrPtr))
+  {
+    storenum[j] = **linePtrPtr;
+    j++;
+    *linePtrPtr += 1;
+    checkindex->index +=1;
+  }
+  // if(isDecimal(**linePtrPtr))
+  // {
+  //   storenum[j] = **linePtrPtr;
+  //   j++;
+  //   *linePtrPtr += 1;
+  //   checkindex->index +=1;
+  //   while(isNumbers(**linePtrPtr))
+  //   {
+  //     storenum[j] = **linePtrPtr;
+  //     j++;
+  //     *linePtrPtr += 1;
+  //     checkindex->index +=1;
+  //   }
+  // }
+  value = atoi(storenum);
+  return value;
+
+  // while(!isEmpty(**linePtrPtr)&&!isAlpha(**linePtrPtr))
+  // {
+  //   if(isNumbers(**linePtrPtr))
+  //   {
+  //     storenum[j] = **linePtrPtr;
+  //     // printf("number %d\n",storenum[j]);
+  //     j++;
+  //     // i++;
+  //     // *linePtrPtr+=i;
+  //     // check = strtof(*linePtrPtr,&storenum);
+  //   }
+  //   else
+  //   {
+  //     Throw(createException("No integer ",NO_INTEGER));
+  //   }
+  //   *linePtrPtr += 1;
+  // }
+
 }

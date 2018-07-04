@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <stdarg.h>
-#include "CException.h"
+// #include "CException.h"
 #include "Token.h"
 
 Exception *createException(char *msg, int errorCode){

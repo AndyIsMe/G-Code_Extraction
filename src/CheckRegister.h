@@ -5,12 +5,13 @@
 #include "stdlib.h"
 #include "Token.h"
 #include "Error.h"
-#include "Exception.h"
-#include "CExceptionConfig.h"
 
-#define isCharacter(x)      (((x) >= 'a' && (x) <= 'z') || ((x) >= 'A' && (x) <= 'Z'))
+
+
+#define isAlpha(x)      (((x) >= 'a' && (x) <= 'z') || ((x) >= 'A' && (x) <= 'Z'))
 #define isNumbers(x)          ((x) >= '0' && (x) <= '9')
-#define isNULL(x)          ((x) == ' ')
+#define isEmpty(x)          ((x) == ' ')
+#define isDecimal(x)    ((x) == '.')
 
 typedef struct Variable Variable;
 struct Variable {
@@ -19,10 +20,17 @@ struct Variable {
   int fraction;
   int isValid;
 };
+
+typedef struct CheckIndex CheckIndex;
+struct CheckIndex{
+  int index;
+};
 //char **fillsInVariableTable(char **linePtrPtr);
-void fillsInVariableTable(char *linePtrPtr);
+Variable fillsInVariableTable(char *linePtrPtr);
 // void getChar(char **line);
 //char getChar(char **line);
-int getChar(char **linePtrPtr);
-int getValue(char **linePtrPtr,int index);
+char getChar(char **linePtrPtr,CheckIndex *checkindex);
+int getValue(char **linePtrPtr,CheckIndex *checkindex);
+//char getChar(char **linePtrPtr);
+//int getValue(char **linePtrPtr,int index);
 #endif // _CHECKREGISTER_H
