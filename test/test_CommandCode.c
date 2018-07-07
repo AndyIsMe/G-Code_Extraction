@@ -42,7 +42,7 @@ void test_Gcode00(void)
     {"G00",g00VarTableMapping}
   };
   char line[] = "G00 X100";
-  cmd = decodeGcode(line,GCode00);
+  line = decodeGcode(line,GCode00,&cmd);
 
 
 }
