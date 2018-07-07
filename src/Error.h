@@ -5,5 +5,8 @@
 #define NOT_VALID_INTEGER_TYPE 52
 #define INVALID_IDENTIFIER 53
 #define INVALID_INTEGER 54
+#define TRUE 1
+#define FALSE 0
+#define NOCODE 55
 
 #endif // _ERROR_H

@@ -20,6 +20,21 @@ struct Variable {
   int fraction;
   int isValid;
 };
+typedef struct VariableMap VariableMap;
+struct VariableMap{
+  char name;
+  Variable *var;
+};
+Variable xVar = {0,0,0,0};
+Variable yVar = {0,0,0,0};
+Variable zVar = {0,0,0,0};
+
+typedef struct GCodeMapping GCodeMapping;
+struct GCodeMapping{
+  char name;
+  VariableMap *varMap;
+};
+
 
 typedef struct CheckIndex CheckIndex;
 struct CheckIndex{
