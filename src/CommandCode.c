@@ -5,7 +5,7 @@
 #include "CException.h"
 #include "error.h"
 
-int decodeGcode(char *line)
+int decodeGcode(char *line,GCodeMapping *GCode)
 {
   StoreCMD cmd;
   char *variables;
@@ -50,14 +50,14 @@ char *getGcodeCommand(char *line,StoreCMD *cmd)
     return line;
 }
 
-void fillInVarTableG91(char *line)
-{
-  while(isEmpty(*line))
-  {
-    line += 1;
-  }
-  if(*line == varTableG00[0].name)
-  {
-
-  }
-}
+// void fillInVarTableG91(char *line)
+// {
+//   while(isEmpty(*line))
+//   {
+//     line += 1;
+//   }
+//   if(*line == varTableG00[0].name)
+//   {
+//
+//   }
+// }
