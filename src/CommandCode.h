@@ -11,10 +11,35 @@ struct StoreCMD{
   int code;
 };
 
+typedef struct Variable Variable;
+struct Variable {
+  char name;
+  int integer;
+  int fraction;
+  int isValid;
+};
+typedef struct VariableMap VariableMap;
+struct VariableMap{
+  char name;
+  Variable *var;
+};
+// Variable xVar = {0,0,0,0};
+// Variable yVar = {0,0,0,0};
+// Variable zVar = {0,0,0,0};
 
-
-int decodeGcode(char *line);
-char *getGcodeCommand(char *line,StoreCMD *cmd);
+typedef struct GCodeMapping GCodeMapping;
+struct GCodeMapping{
+  char *name;
+  VariableMap *varMap;
+};
+void decodeGcode(char *line,GCodeMapping *GCode,StoreCMD *cmd);
+// char *decodeGcode(char *line,GCodeMapping *GCode,StoreCMD *cmd);
+char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd);
+// int getVariables(char *line,GCodeMapping *GCode);
+void getVariables(char *line,GCodeMapping *GCode);
+char *getValue(char *line,GCodeMapping *GCode);
+//int decodeGcode(char *line);
+//char *getGcodeCommand(char *line,StoreCMD *cmd);
 
 
 

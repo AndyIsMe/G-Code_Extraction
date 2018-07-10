@@ -8,5 +8,7 @@
 #define TRUE 1
 #define FALSE 0
 #define NOCODE 55
+#define ERROR_CODE 56
+#define NOT_ALPHA 57
 
 #endif // _ERROR_H
