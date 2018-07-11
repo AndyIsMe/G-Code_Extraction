@@ -132,18 +132,19 @@ char *getValue(char *line,GCodeMapping *GCode)
   }
   while(isNumbers(*line)||isDecimal(*line))
   {
-    if(validate_decimal == FALSE)
-    {
       if(isDecimal(*line))
       {
-        storenum[i] = *line;
-        line += 1;
-        validate_decimal = TRUE;
+        if(validate_decimal == FALSE)
+        {
+          storenum[i] = *line;
+          line += 1;
+          i++;
+          validate_decimal = TRUE;
+        }
+        else{
+          throwException(ERROR_VALUE,"Value contains more than 1 ",*line);
+        }
       }
-    }
-    else{
-      throwException(ERROR_VALUE,"Value contains more than 1 ",*line);
-    }
     storenum[i] = *line;
     i++;
     line += 1;
