@@ -32,7 +32,7 @@ struct GCodeMapping{
   char *name;
   VariableMap *varMap;
 };
-void decodeGcode(char *line,GCodeMapping *GCode,StoreCMD *cmd);
+StoreCMD decodeGcode(char *line,GCodeMapping *GCode/*,StoreCMD *cmd*/);
 // char *decodeGcode(char *line,GCodeMapping *GCode,StoreCMD *cmd);
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd);
 // int getVariables(char *line,GCodeMapping *GCode);

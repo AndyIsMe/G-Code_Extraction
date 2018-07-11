@@ -5,8 +5,9 @@
 #include "CException.h"
 #include "error.h"
 
-void decodeGcode(char *line,GCodeMapping *GCode,StoreCMD *cmd)
+StoreCMD decodeGcode(char *line,GCodeMapping *GCode/*,StoreCMD *cmd*/)
 {
+  StoreCMD cmd;
   char *line2;
   while(isEmpty(*line))
   {
@@ -14,15 +15,22 @@ void decodeGcode(char *line,GCodeMapping *GCode,StoreCMD *cmd)
   }
     if(*line == *(GCode)->name)
     {
-      cmd->type = *line;
+      cmd.type = *line;
       line += 1;
     }
+    else
+    {
+      printf("check : %c\n",*line );
+      throwException(ERROR_COMMAND,"Error!,no such command exist\n \
+      Expect to be 'G' but was %c\n",*line);
+    }
     GCode->name += 1;
-    line2 = line;
+    //line2 = line;
     // variables = line;
     // return variables;
-    line2 = getGcodeCommand(line,GCode,cmd);
-    getVariables(line2,GCode);
+    line = getGcodeCommand(line,GCode,&cmd);
+    getVariables(line,GCode);
+    return cmd;
     // valid = getVariables(line,GCode);
     //return variables;
     //getVariables()
@@ -45,7 +53,8 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
   }
   if(isAlpha(*line))
   {
-    throwException(ERROR_CODE,"Error!,spotted more than 1 alphabet in a command\n");
+    throwException(ERROR_CODE,"Error!,spotted more than 1 alphabet in a command\n \
+    Expect to be an integer but was %c\n",*line);
     //checkindex->index += 1;
     //cmd->type = *line;
     //line += 1;
@@ -58,12 +67,17 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
       line += 1;
       GCode->name += 1;
     }
+    else
+    {
+      Throw(createException("Error!,code either is not in the same group sharing the \
+      same variable or code does not exist\n",ERROR_CODE));
+    }
   }
   cmd->code = atoi(storecode);
-  if(cmd->code >= 100)
-  {
-    throwException(NOCODE,"Error!,no such code\n");
-  }
+  // if(cmd->code >= 100)
+  // {
+  //   throwException(NOCODE,"Error!,no such code\n");
+  // }
   return line;
     // while(isNumbers(*line))
     // {
@@ -80,10 +94,13 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
 }
 void getVariables(char *line,GCodeMapping *GCode)
 {
-  //int i;
-  //char *initial = *line;
-  //char storenum[20] = {0};
+
   int j;
+  if(isNumbers(*line))
+  {
+    throwException(ERROR_VARIABLE,"Invalid variable,expect variable to be \n\
+    a character but was %c",*line);
+  }
   while(isEmpty(*line))
   {
     line += 1;
@@ -92,7 +109,7 @@ void getVariables(char *line,GCodeMapping *GCode)
   {
   if(isAlpha(*line))
   {
-    while(isAlpha((GCode)->varMap->name))
+    while(((GCode)->varMap->name)!=NULL)
     {
       if(isEmpty(*line))
       {
@@ -100,29 +117,28 @@ void getVariables(char *line,GCodeMapping *GCode)
       }
       if(*line == (GCode)->varMap->name)
       {
-        (GCode)->varMap->var->name = *line;
-        line += 1;
-        line = getValue(line,GCode);
-        (GCode)->varMap->var->isValid = 1;
-        // while(isNumbers(*line))
-        // {
-        //   storenum[i] = *line;
-        //   i++;
-        //   line += 1;
-        // }
-        // value = atoi(storenum);
-        // (GCode)->varMap->var->integer = value;
-        // i=0;
+        if((GCode)->varMap->var->isValid == 0)
+        {
+          (GCode)->varMap->var->name = *line;
+          line += 1;
+          line = getValue(line,GCode);
+          (GCode)->varMap->var->isValid = 1;
+        }
+        else
+        {
+          throwException(ERROR_DUPLICATE_VARIABLE,"Error,variable of %c has been declared once\n",*line);
+        }
       }
       else{
-      GCode->varMap->name += 1;
-      GCode->varMap->var += 1;
+      *(GCode)->varMap++;
+      // GCode->varMap->var++;
       }
     }
   }
   else{
-    throwException(NOT_ALPHA,"Error!,expect it to be an alphabet but was %c\n",*line);
+    throwException(NOT_ALPHA,"Error!,expect it to be a character but was %c\n",*line);
   }
+  *GCode->varMap = GCode->varMap[0];
   // GCode->varMap->name = 0;
   // GCode->varMap->var = 0;
 }
@@ -133,6 +149,11 @@ char *getValue(char *line,GCodeMapping *GCode)
   int i=0;
   char storenum[20] = {0};
   int value;
+  if(isAlpha(*line))
+  {
+    throwException(ERROR_VALUE,"Error!,expect integer since variable has been declared \
+     but was %c\n",*line);
+  }
   while(isEmpty(*line))
   {
     line += 1;

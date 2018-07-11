@@ -10,5 +10,9 @@
 #define NOCODE 55
 #define ERROR_CODE 56
 #define NOT_ALPHA 57
+#define ERROR_COMMAND 58
+#define ERROR_VARIABLE 59
+#define ERROR_DUPLICATE_VARIABLE 60
+#define ERROR_VALUE 61
 
 #endif // _ERROR_H

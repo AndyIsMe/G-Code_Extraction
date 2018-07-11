@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <stdarg.h>
-// #include "CException.h"
-#include "Token.h"
+#include "CException.h"
+//#include "Token.h"
 
 Exception *createException(char *msg, int errorCode){
   Exception *e = malloc(sizeof(Exception));
@@ -13,21 +13,21 @@ Exception *createException(char *msg, int errorCode){
   return e;
 }
 
-void dumpErrorMessage(Exception *e, int lineNo) {
-  Token *token = (Token *)e->data;
-  int i = token->length - 1;
-  if(i < 0) i = 0;
+// void dumpErrorMessage(Exception *e, int lineNo) {
+//   Token *token = (Token *)e->data;
+//   int i = token->length - 1;
+//   if(i < 0) i = 0;
+//
+//   printf("Error %d:\n", lineNo);
+//   printf("%s\n", e->msg);
+//   printf("%s\n", token->originalStr);
+//   printf("%*s", token->startColumn + 1, "^");
+//   while(i--)
+//     printf("~");
+//   putchar('\n');
+// }
 
-  printf("Error %d:\n", lineNo);
-  printf("%s\n", e->msg);
-  printf("%s\n", token->originalStr);
-  printf("%*s", token->startColumn + 1, "^");
-  while(i--)
-    printf("~");
-  putchar('\n');
-}
-
-void throwException(int errorCode/*, void *data*/, char *message, ...) {
+void throwException(int errorCode, char *message,char data ,...) {
   va_list args;
   char *buffer;
   int length;
@@ -42,8 +42,8 @@ void throwException(int errorCode/*, void *data*/, char *message, ...) {
 
   e->msg = buffer;
   e->errorCode = errorCode;
-  //e->data = data;
-
+  e->data = data;
+printf("test : %c\n",e->data );
   Throw(e);
 }
 
@@ -56,5 +56,5 @@ void freeException(Exception *e) {
 }
 
 void dumpException(Exception *e) {
-  printf("%s (err=%d)\n", e->msg, e->errorCode);
+  printf("%s(Error cmd = %c) (err=%d)\n", e->msg,e->data, e->errorCode);
 }
