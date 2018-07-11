@@ -14,7 +14,7 @@ struct StoreCMD{
 typedef struct Variable Variable;
 struct Variable {
   char name;
-  int integer;
+  double integer;
   int fraction;
   int isValid;
 };

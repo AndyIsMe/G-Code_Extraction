@@ -5,10 +5,9 @@
 #include "CException.h"
 #include "error.h"
 
-StoreCMD decodeGcode(char *line,GCodeMapping *GCode/*,StoreCMD *cmd*/)
+StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
 {
   StoreCMD cmd;
-  char *line2;
   while(isEmpty(*line))
   {
     line  += 1;
@@ -20,27 +19,13 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode/*,StoreCMD *cmd*/)
     }
     else
     {
-      printf("check : %c\n",*line );
       throwException(ERROR_COMMAND,"Error!,no such command exist\n \
-      Expect to be 'G' but was %c\n",*line);
+      Expect to be 'G' but was ",*line);
     }
     GCode->name += 1;
-    //line2 = line;
-    // variables = line;
-    // return variables;
     line = getGcodeCommand(line,GCode,&cmd);
     getVariables(line,GCode);
     return cmd;
-    // valid = getVariables(line,GCode);
-    //return variables;
-    //getVariables()
-  // line = getGcodeCommand(line,&cmd);
-  // if(cmd.code==0 && cmd.type=='G')
-  // {
-  //   fillInVarTableG91(line);
-  //   return TRUE;
-  // }
-  // return FALSE;
 }
 
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
@@ -54,10 +39,7 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
   if(isAlpha(*line))
   {
     throwException(ERROR_CODE,"Error!,spotted more than 1 alphabet in a command\n \
-    Expect to be an integer but was %c\n",*line);
-    //checkindex->index += 1;
-    //cmd->type = *line;
-    //line += 1;
+    Expect to be an integer but was ",*line);
   }
   for(i=0 ; i<2 ; i++)
   {
@@ -79,18 +61,6 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
   //   throwException(NOCODE,"Error!,no such code\n");
   // }
   return line;
-    // while(isNumbers(*line))
-    // {
-    //   storenum[i] = *line;
-    //   i++;
-    //   line += 1;
-    // }
-    // cmd->code = atoi(storenum);
-    // if(cmd->code >= 100)
-    // {
-    //   throwException(NOCODE,"Error!,no such code\n");
-    // }
-    // return line;
 }
 void getVariables(char *line,GCodeMapping *GCode)
 {
@@ -99,7 +69,7 @@ void getVariables(char *line,GCodeMapping *GCode)
   if(isNumbers(*line))
   {
     throwException(ERROR_VARIABLE,"Invalid variable,expect variable to be \n\
-    a character but was %c",*line);
+    a character but was ",*line);
   }
   while(isEmpty(*line))
   {
@@ -126,52 +96,60 @@ void getVariables(char *line,GCodeMapping *GCode)
         }
         else
         {
-          throwException(ERROR_DUPLICATE_VARIABLE,"Error,variable of %c has been declared once\n",*line);
+          throwException(ERROR_DUPLICATE_VARIABLE,"Error,variable has been declared once",*line);
         }
       }
       else{
       *(GCode)->varMap++;
       i++;
-      // GCode->varMap->var++;
       }
     }
   }
   else{
-    throwException(NOT_ALPHA,"Error!,expect it to be a character but was %c\n",*line);
+    throwException(NOT_ALPHA,"Error!,expect it to be a character but was ",*line);
   }
   while(i!=0)
   {
     *(GCode)->varMap--;
     i--;
   }
-    //&(*(GCode)->varMap) = &(*(GCode)->varMap) - i;
-  // *GCode->varMap =  GCode->varMap[0];
-  // GCode->varMap->name = 0;
-  // GCode->varMap->var = 0;
 }
 }
 
 char *getValue(char *line,GCodeMapping *GCode)
 {
   int i=0;
+  int validate_decimal = 0;
   char storenum[20] = {0};
-  int value;
+  double value;
   if(isAlpha(*line))
   {
-    throwException(ERROR_VALUE,"Error!,expect integer since variable has been declared \
-     but was %c\n",*line);
+    throwException(ERROR_VALUE,"Error!,expect integer since variable has been declared but was ",*line);
   }
   while(isEmpty(*line))
   {
     line += 1;
   }
-  while(isNumbers(*line))
+  while(isNumbers(*line)||isDecimal(*line))
   {
+    if(validate_decimal == FALSE)
+    {
+      if(isDecimal(*line))
+      {
+        storenum[i] = *line;
+        line += 1;
+        validate_decimal = TRUE;
+      }
+    }
+    else{
+      throwException(ERROR_VALUE,"Value contains more than 1 ",*line);
+    }
     storenum[i] = *line;
     i++;
     line += 1;
   }
-  value = atoi(storenum);
+
+  value = atof(storenum);
   (GCode)->varMap->var->integer = value;
   return line;
 

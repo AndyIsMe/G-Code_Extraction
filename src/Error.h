@@ -15,4 +15,5 @@
 #define ERROR_DUPLICATE_VARIABLE 60
 #define ERROR_VALUE 61
 
+
 #endif // _ERROR_H

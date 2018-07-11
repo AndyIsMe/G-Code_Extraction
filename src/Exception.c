@@ -43,7 +43,6 @@ void throwException(int errorCode, char *message,void *data ,...) {
   e->msg = buffer;
   e->errorCode = errorCode;
   e->data = data;
-printf("test : %c\n",e->data );
   Throw(e);
 }
 
@@ -56,5 +55,5 @@ void freeException(Exception *e) {
 }
 
 void dumpException(Exception *e) {
-  printf("%s(Error cmd = %c) (err=%d)\n", e->msg,e->data, e->errorCode);
+  printf("%s %c (err=%d)\n", e->msg,e->data, e->errorCode);
 }
