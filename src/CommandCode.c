@@ -95,7 +95,7 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
 void getVariables(char *line,GCodeMapping *GCode)
 {
 
-  int j;
+  int j,i=0;
   if(isNumbers(*line))
   {
     throwException(ERROR_VARIABLE,"Invalid variable,expect variable to be \n\
@@ -131,6 +131,7 @@ void getVariables(char *line,GCodeMapping *GCode)
       }
       else{
       *(GCode)->varMap++;
+      i++;
       // GCode->varMap->var++;
       }
     }
@@ -138,7 +139,13 @@ void getVariables(char *line,GCodeMapping *GCode)
   else{
     throwException(NOT_ALPHA,"Error!,expect it to be a character but was %c\n",*line);
   }
-  *GCode->varMap = GCode->varMap[0];
+  while(i!=0)
+  {
+    *(GCode)->varMap--;
+    i--;
+  }
+    //&(*(GCode)->varMap) = &(*(GCode)->varMap) - i;
+  // *GCode->varMap =  GCode->varMap[0];
   // GCode->varMap->name = 0;
   // GCode->varMap->var = 0;
 }

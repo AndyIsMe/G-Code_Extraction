@@ -27,7 +27,7 @@ Exception *createException(char *msg, int errorCode){
 //   putchar('\n');
 // }
 
-void throwException(int errorCode, char *message,char data ,...) {
+void throwException(int errorCode, char *message,void *data ,...) {
   va_list args;
   char *buffer;
   int length;
