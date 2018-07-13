@@ -8,33 +8,10 @@
 void setUp(void){}
 void tearDown(void){}
 
-// void test_CommandCode(void)
-// {
-//   int val;
-//     char cmd[] = "G 00 X123 ";
-//     val = decodeGcode(cmd);
-//     TEST_ASSERT_EQUAL(1,val);
-//     printf("%s\n",cmd);
-// }
-//
-// void test_CommandCode_expect_exception(void)
-// {
-//     CEXCEPTION_T ex;
-//     int val;
-//     char cmd[] = "G 100 X123 ";
-//   Try{
-//     val = decodeGcode(cmd);
-//   }Catch(ex){
-//     dumpException(ex);
-//   }
-//   freeException(ex);
-// }
-
 // void test_G00_expect_G0_cmd_X_var_100_value(void)
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -67,7 +44,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -100,7 +76,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -131,7 +106,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -164,7 +138,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -195,7 +168,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -226,7 +198,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -257,7 +228,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -291,7 +261,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -321,7 +290,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -351,7 +319,6 @@ void tearDown(void){}
 // {
 //   CEXCEPTION_T ex;
 //   StoreCMD cmd = {0,0};
-//   char *remaining;
 //   Variable xVar = {0,0,0,0};
 //   Variable yVar = {0,0,0,0};
 //   Variable zVar = {0,0,0,0};
@@ -383,11 +350,104 @@ void tearDown(void){}
 //   }
 // }
 
+void test_G00_expect_G0_cmd_Y_var_101_value_X_var_999_value_Z_var_21_value(void)
+{
+  CEXCEPTION_T ex;
+  StoreCMD cmd = {0,0};
+  Variable xVar = {0,0,0,0};
+  Variable yVar = {0,0,0,0};
+  Variable zVar = {0,0,0,0};
+
+  VariableMap g00VarTableMapping[] = {
+    {'X',&xVar},
+    {'Y',&yVar},
+    {'Z',&zVar},
+    {NULL,NULL},
+  };
+  GCodeMapping GCode00[] = {
+    {"G00",g00VarTableMapping},
+    {NULL,NULL},
+  };
+  char *line = "G00Y101X999Z21";
+  Try{
+    cmd = decodeGcode(line,GCode00);
+    TEST_ASSERT_EQUAL('G',cmd.type);
+    TEST_ASSERT_EQUAL(0,cmd.code);
+    TEST_ASSERT_EQUAL('X',xVar.name);
+    TEST_ASSERT_EQUAL(999,xVar.integer);
+    TEST_ASSERT_EQUAL('Y',yVar.name);
+    TEST_ASSERT_EQUAL(101,yVar.integer);
+    TEST_ASSERT_EQUAL('Z',zVar.name);
+    TEST_ASSERT_EQUAL(21,zVar.integer);
+
+  }Catch(ex){
+    dumpException(ex);
+  }
+}
+
+void test_G00_expect_Y_var_101_throw_exception_error_value(void)
+{
+  CEXCEPTION_T ex;
+  StoreCMD cmd = {0,0};
+  Variable xVar = {0,0,0,0};
+  Variable yVar = {0,0,0,0};
+  Variable zVar = {0,0,0,0};
+
+  VariableMap g00VarTableMapping[] = {
+    {'X',&xVar},
+    {'Y',&yVar},
+    {'Z',&zVar},
+    {NULL,NULL},
+  };
+  GCodeMapping GCode00[] = {
+    {"G00",g00VarTableMapping},
+    {NULL,NULL},
+  };
+  char *line = "G00Y101XU999Z21";
+  Try{
+    cmd = decodeGcode(line,GCode00);
+
+  }Catch(ex){
+    dumpException(ex);
+    TEST_ASSERT_EQUAL(ERROR_VALUE,ex->errorCode);
+    TEST_ASSERT_EQUAL('Y',yVar.name);
+    TEST_ASSERT_EQUAL(101,yVar.integer);
+  }
+  freeException(ex);
+}
+
+void test_G00_expect_throw_exception_variable_does_not_exist(void)
+{
+  CEXCEPTION_T ex;
+  StoreCMD cmd = {0,0};
+  Variable xVar = {0,0,0,0};
+  Variable yVar = {0,0,0,0};
+  Variable zVar = {0,0,0,0};
+
+  VariableMap g00VarTableMapping[] = {
+    {'X',&xVar},
+    {'Y',&yVar},
+    {'Z',&zVar},
+    {NULL,NULL},
+  };
+  GCodeMapping GCode00[] = {
+    {"G00",g00VarTableMapping},
+    {NULL,NULL},
+  };
+  char *line = "G00C101X999Z21";
+  Try{
+    cmd = decodeGcode(line,GCode00);
+  }Catch(ex){
+    dumpException(ex);
+    TEST_ASSERT_EQUAL(VARIABLE_DOES_NOT_EXIST,ex->errorCode);
+  }
+  freeException(ex);
+}
+
 void test_G00_expect_G0_cmd_X_var_99_point_99_value_Y_var_101_value_Z_var_20_value(void)
 {
   CEXCEPTION_T ex;
   StoreCMD cmd = {0,0};
-  char *remaining;
   Variable xVar = {0,0,0,0};
   Variable yVar = {0,0,0,0};
   Variable zVar = {0,0,0,0};
@@ -423,7 +483,6 @@ void test_G00_Y101_X99_point_99_point_5_expect_throw_exception_error_value(void)
 {
   CEXCEPTION_T ex;
   StoreCMD cmd = {0,0};
-  char *remaining;
   Variable xVar = {0,0,0,0};
   Variable yVar = {0,0,0,0};
   Variable zVar = {0,0,0,0};

@@ -5,6 +5,11 @@
 #include "string.h"
 #include "Error.h"
 
+#define isAlpha(x)      (((x) >= 'a' && (x) <= 'z') || ((x) >= 'A' && (x) <= 'Z'))
+#define isNumbers(x)          ((x) >= '0' && (x) <= '9')
+#define isEmpty(x)          ((x) == ' ')
+#define isDecimal(x)    ((x) == '.')
+
 typedef struct StoreCMD StoreCMD;
 struct StoreCMD{
   char type;
@@ -32,14 +37,10 @@ struct GCodeMapping{
   char *name;
   VariableMap *varMap;
 };
-StoreCMD decodeGcode(char *line,GCodeMapping *GCode/*,StoreCMD *cmd*/);
-// char *decodeGcode(char *line,GCodeMapping *GCode,StoreCMD *cmd);
+StoreCMD decodeGcode(char *line,GCodeMapping *GCode);
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd);
-// int getVariables(char *line,GCodeMapping *GCode);
 void getVariables(char *line,GCodeMapping *GCode);
 char *getValue(char *line,GCodeMapping *GCode);
-//int decodeGcode(char *line);
-//char *getGcodeCommand(char *line,StoreCMD *cmd);
 
 
 

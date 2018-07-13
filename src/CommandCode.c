@@ -1,5 +1,4 @@
 #include "CommandCode.h"
-#include "CheckRegister.h"
 #include "CException.h"
 #include "Exception.h"
 #include "CException.h"
@@ -102,6 +101,10 @@ void getVariables(char *line,GCodeMapping *GCode)
       else{
       *(GCode)->varMap++;
       i++;
+      // if(*line != (GCode)->varMap->name && ((GCode)->varMap->name)==NULL)
+      // {
+      //   throwException(VARIABLE_DOES_NOT_EXIST,"Error,variable does not exist in this command",*line);
+      // }
       }
     }
   }
@@ -114,6 +117,10 @@ void getVariables(char *line,GCodeMapping *GCode)
     i--;
   }
 }
+  if(*line != NULL)
+  {
+    throwException(VARIABLE_DOES_NOT_EXIST,"Error,variable does not exist in this command",*line);
+  }
 }
 
 char *getValue(char *line,GCodeMapping *GCode)
@@ -155,91 +162,3 @@ char *getValue(char *line,GCodeMapping *GCode)
   return line;
 
 }
-// int getVariables(char *line,GCodeMapping *GCode)
-// {
-//   char storenum[20] = {0};
-//   int i=0,value;
-//   while(isEmpty(*line))
-//   {
-//     line += 1;
-//   }
-//   if(isAlpha(*line))
-//   {
-//     while(isAlpha((GCode)->varMap->name))
-//     {
-//       if(isEmpty(*line))
-//       {
-//         line += 1;
-//       }
-//       if(*line == (GCode)->varMap->name)
-//       {
-//         (GCode)->varMap->var->name = *line;
-//         line += 1;
-//         while(isEmpty(*line))
-//         {
-//           line += 1;
-//         }
-//         while(isNumbers(*line))
-//         {
-//           storenum[i] = *line;
-//           i++;
-//           line += 1;
-//         }
-//         value = atoi(storenum);
-//         (GCode)->varMap->var->integer = value;
-//         i=0;
-//       }
-//       GCode->varMap->name += 1;
-//       GCode->varMap->var += 1;
-//
-//     }
-//     return 1;
-//   }
-//   else{
-//     throwException(NOT_ALPHA,"Error!,expect it to be an alphabet but was %c\n",*line);
-//   }
-// }
-
-// char *getGcodeCommand(char *line,StoreCMD *cmd)
-// {
-//   int i=0;
-//   char storenum[20] = {0};
-//   while(isEmpty(*line))
-//   {
-//     line += 1;
-//   }
-//   while(isAlpha(*line))
-//   {
-//     //checkindex->index += 1;
-//     cmd->type = *line;
-//     line += 1;
-//   }
-//   while(isEmpty(*line))
-//   {
-//     line += 1;
-//   }
-//     while(isNumbers(*line))
-//     {
-//       storenum[i] = *line;
-//       i++;
-//       line += 1;
-//     }
-//     cmd->code = atoi(storenum);
-//     if(cmd->code >= 100)
-//     {
-//       throwException(NOCODE,"Error!,no such code\n");
-//     }
-//     return line;
-// }
-
-// void fillInVarTableG91(char *line)
-// {
-//   while(isEmpty(*line))
-//   {
-//     line += 1;
-//   }
-//   if(*line == varTableG00[0].name)
-//   {
-//
-//   }
-// }
