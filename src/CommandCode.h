@@ -12,8 +12,11 @@
 
 typedef struct StoreCMD StoreCMD;
 struct StoreCMD{
+  char SetUpcmd;
+  char SetUpCode;
   char type;
   int code;
+
 };
 
 typedef struct Variable Variable;
