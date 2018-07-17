@@ -3,6 +3,7 @@
 #include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
+
 // #define MM_UNIT 0
 // #define INCH_UNIT 1
 /*
@@ -15,13 +16,20 @@
   *
   *
   */
+typedef struct XYZStep XYZStep;
+struct XYZStep{
+  int XStep;
+  int YStep;
+  int ZStep;
+};
 enum UnitType {MM_UNIT = 0,INCH_UNIT = 1}baseType;
 #define MM_TO_STEPS(x) ((x)*8)
 #define INCH_TO_STEPS(MM_TO_STEPS) (MM_TO_STEPS*0.0393701)
 
 // enum UnitType baseType
-
-int convertBaseUnitToSteps(float unit,int baseType);
+//void convertBaseUnitToSteps(VariableMap *var,int baseType,int numOfVar);
+//VariableMap *convertBaseUnitToSteps(VariableMap *var,int baseType);
+//int convertBaseUnitToSteps(float unit,int baseType);
 
 
 #endif // _USER_H

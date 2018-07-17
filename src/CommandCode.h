@@ -5,6 +5,7 @@
 #include "string.h"
 #include "Error.h"
 
+
 #define isAlpha(x)      (((x) >= 'a' && (x) <= 'z') || ((x) >= 'A' && (x) <= 'Z'))
 #define isNumbers(x)          ((x) >= '0' && (x) <= '9')
 #define isEmpty(x)          ((x) == ' ')
@@ -31,19 +32,30 @@ struct VariableMap{
   char name;
   Variable *var;
 };
-// Variable xVar = {0,0,0,0};
-// Variable yVar = {0,0,0,0};
-// Variable zVar = {0,0,0,0};
 
 typedef struct GCodeMapping GCodeMapping;
 struct GCodeMapping{
   char *name;
   VariableMap *varMap;
 };
+
+typedef struct XYZStep XYZStep;
+struct XYZStep{
+  int XStep;
+  int YStep;
+  int ZStep;
+};
+enum UnitType {MM_UNIT = 0,INCH_UNIT = 1}baseType;
+#define MM_TO_STEPS(x) ((x)*8)
+#define INCH_TO_STEPS(MM_TO_STEPS) (MM_TO_STEPS*0.0393701)
+
+void convertBaseUnitToSteps(VariableMap *var,int baseType);
 StoreCMD decodeGcode(char *line,GCodeMapping *GCode);
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd);
 void getVariables(char *line,GCodeMapping *GCode);
 char *getValue(char *line,GCodeMapping *GCode);
+void CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var);
+//void CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var);
 
 
 

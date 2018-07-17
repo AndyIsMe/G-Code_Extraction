@@ -29,7 +29,7 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
 
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
 {
-  int i=0,j;
+  int i=0,j=0;
   char storecode[20] = {0};
   while(isEmpty(*line))
   {
@@ -50,9 +50,22 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
     }
     else
     {
+      i = -1;
+      *GCode++;
+      GCode->name += 1;
+      j++;
+    }
+    if((GCode)->name == NULL)
+    {
       Throw(createException("Error!,code either is not in the same group sharing the \
       same variable or code does not exist\n",ERROR_CODE));
     }
+  }
+  while(j !=0)
+  {
+    *GCode--;
+    GCode->name--;
+    j--;
   }
   cmd->code = atoi(storecode);
   // if(cmd->code >= 100)
@@ -65,6 +78,7 @@ void getVariables(char *line,GCodeMapping *GCode)
 {
 
   int j,i=0;
+  const int len = strlen(line);
   if(isNumbers(*line))
   {
     throwException(ERROR_VARIABLE,"Invalid variable,expect variable to be \n\
@@ -72,6 +86,10 @@ void getVariables(char *line,GCodeMapping *GCode)
   }
   while(isEmpty(*line))
   {
+    if(len > 0  && line[len-1] == '/')
+    {
+      return 0;
+    }
     line += 1;
   }
   for(j=0;j<strlen(line);j++)
@@ -161,4 +179,44 @@ char *getValue(char *line,GCodeMapping *GCode)
   (GCode)->varMap->var->integer = value;
   return line;
 
+}
+
+void CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var)
+{
+  // if(SetUpCmd.code == 91)
+  // {
+  //   ConfigRelaToAbso(var);
+  // }
+   if(SetUpCmd.code == 20)
+  {
+    convertBaseUnitToSteps(var,0);
+  }
+  else if(SetUpCmd.code == 21)
+  {
+    //convertBaseUnitToSteps(var,0,numOfVar);
+  }
+}
+
+void convertBaseUnitToSteps(VariableMap *var,int baseType)
+{
+  XYZStep xyzStep;
+  int Steps[]={0}, i=0;
+  if(baseType == MM_UNIT)
+  {
+    while(var->var!=NULL)
+    {
+      Steps[i] = MM_TO_STEPS(var->var->integer);
+      *(var)++;
+      i++;
+    }
+  }
+  if(baseType == INCH_UNIT)
+  {
+    while(var->var!=NULL)
+    {
+      Steps[i] = INCH_TO_STEPS(var->var->integer);
+      *(var)++;
+      i++;
+    }
+  }
 }
