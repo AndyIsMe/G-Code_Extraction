@@ -11,6 +11,10 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
   {
     line  += 1;
   }
+  while(*(GCode)->name == NULL)
+  {
+    *GCode++;
+  }
     if(*line == *(GCode)->name)
     {
       cmd.type = *line;
@@ -186,7 +190,16 @@ char *getValue(char *line,GCodeMapping *GCode)
 
 }
 
-int *CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var)
+int *CheckSetUpCmd(int *Steps,StoreCMD SetUpCmd2)
+{
+  if(SetUpCmd2.code == 90 || SetUpCmd2.code == 0 || SetUpCmd2.code == 91)
+  {
+    return Steps;
+  }
+}
+
+
+int *CheckUnitSetUpCmd(StoreCMD SetUpCmd,VariableMap *var)
 {
   int *Steps;
   // if(SetUpCmd.code == 91)
