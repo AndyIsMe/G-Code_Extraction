@@ -47,14 +47,15 @@ struct XYZStep{
 };
 enum UnitType {MM_UNIT = 0,INCH_UNIT = 1}baseType;
 #define MM_TO_STEPS(x) ((x)*8)
-#define INCH_TO_STEPS(MM_TO_STEPS) (MM_TO_STEPS*0.0393701)
+#define INCH_TO_STEPS(MM_TO_STEPS) ((MM_TO_STEPS)*8*0.0393701)
 
-void convertBaseUnitToSteps(VariableMap *var,int baseType);
+//void convertBaseUnitToSteps(VariableMap *var,int baseType);
 StoreCMD decodeGcode(char *line,GCodeMapping *GCode);
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd);
 void getVariables(char *line,GCodeMapping *GCode);
 char *getValue(char *line,GCodeMapping *GCode);
-void CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var);
+int *CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var);
+int *convertBaseUnitToSteps(VariableMap *var,int baseType);
 //void CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var);
 
 

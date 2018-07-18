@@ -29,8 +29,13 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
 
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
 {
-  int i=0,j=0;
+  int i=0,j=0,w=0;
   char storecode[20] = {0};
+  // while(*line != *(GCode)->name)
+  // {
+  //   *GCode++;
+  //   w++;
+  // }
   while(isEmpty(*line))
   {
     line += 1;
@@ -181,26 +186,29 @@ char *getValue(char *line,GCodeMapping *GCode)
 
 }
 
-void CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var)
+int *CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var)
 {
+  int *Steps;
   // if(SetUpCmd.code == 91)
   // {
   //   ConfigRelaToAbso(var);
   // }
-   if(SetUpCmd.code == 20)
+   if(SetUpCmd.code == 20 || SetUpCmd.code == 0)
   {
-    convertBaseUnitToSteps(var,0);
+    Steps = convertBaseUnitToSteps(var,0);
   }
   else if(SetUpCmd.code == 21)
   {
-    //convertBaseUnitToSteps(var,0,numOfVar);
+    Steps = convertBaseUnitToSteps(var,1);
   }
+  return Steps;
 }
 
-void convertBaseUnitToSteps(VariableMap *var,int baseType)
+int *convertBaseUnitToSteps(VariableMap *var,int baseType)
 {
   XYZStep xyzStep;
-  int Steps[]={0}, i=0;
+  static int Steps[10];
+  int i=0;
   if(baseType == MM_UNIT)
   {
     while(var->var!=NULL)
@@ -219,4 +227,5 @@ void convertBaseUnitToSteps(VariableMap *var,int baseType)
       i++;
     }
   }
+  return Steps;
 }
