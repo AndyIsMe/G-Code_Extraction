@@ -562,7 +562,7 @@ void tearDown(void){}
 //     TEST_ASSERT_EQUAL(101,yVar.integer);
 //     TEST_ASSERT_EQUAL('Z',zVar.name);
 //     TEST_ASSERT_EQUAL(20,zVar.integer);
-//     Steps = CheckUnitSetUpCmd(SetUpCmd,g00VarTableMapping);
+//     Steps = CheckUnitSetUpCmd(&SetUpCmd,g00VarTableMapping);
 //     TEST_ASSERT_EQUAL(799,*(Steps));
 //     TEST_ASSERT_EQUAL(808,*(Steps+1));
 //     TEST_ASSERT_EQUAL(160,*(Steps+2));
@@ -606,7 +606,7 @@ void tearDown(void){}
 //     TEST_ASSERT_EQUAL(101,yVar.integer);
 //     TEST_ASSERT_EQUAL('Z',zVar.name);
 //     TEST_ASSERT_EQUAL(20,zVar.integer);
-//     Steps = CheckUnitSetUpCmd(SetUpCmd,g00VarTableMapping);
+//     Steps = CheckUnitSetUpCmd(&SetUpCmd,g00VarTableMapping);
 //     TEST_ASSERT_EQUAL(31,*(Steps));
 //     TEST_ASSERT_EQUAL(31,*(Steps+1));
 //     TEST_ASSERT_EQUAL(6,*(Steps+2));
@@ -665,7 +665,7 @@ void test_G21_G00_G91_G01_cmd_expect_absolute_steps(void)
     TEST_ASSERT_EQUAL(101,yVar.integer);
     TEST_ASSERT_EQUAL('Z',zVar.name);
     TEST_ASSERT_EQUAL(20,zVar.integer);
-    Steps = CheckUnitSetUpCmd(SetUpCmd,g00VarTableMapping);
+    Steps = CheckUnitSetUpCmd(&SetUpCmd,g00VarTableMapping);
     TEST_ASSERT_EQUAL(31,*(Steps));
     TEST_ASSERT_EQUAL(31,*(Steps+1));
     TEST_ASSERT_EQUAL(6,*(Steps+2));
@@ -685,86 +685,15 @@ void test_G21_G00_G91_G01_cmd_expect_absolute_steps(void)
     TEST_ASSERT_EQUAL(20,y1Var.integer);
     TEST_ASSERT_EQUAL('Z',z1Var.name);
     TEST_ASSERT_EQUAL(10,z1Var.integer);
-
+    Steps = CheckUnitSetUpCmd(&SetUpCmd,g01VarTableMapping);
+    TEST_ASSERT_EQUAL(120,*(Steps));
+    TEST_ASSERT_EQUAL(160,*(Steps+1));
+    TEST_ASSERT_EQUAL(80,*(Steps+2));
+    Steps = CheckSetUpCmd(Steps,SetUpCmd2);
+    TEST_ASSERT_EQUAL(120,*(Steps));
+    TEST_ASSERT_EQUAL(160,*(Steps+1));
+    TEST_ASSERT_EQUAL(80,*(Steps+2));
   }Catch(ex){
     dumpException(ex);
   }
 }
-
-// void test_G21_G00_G91_G01(void)
-// {
-//   CEXCEPTION_T ex;
-//   int *Steps;
-//   StoreCMD cmd = {0,0};
-//   StoreCMD cmd1 = {0,0};
-//   StoreCMD SetUpCmd = {0,0};
-//   StoreCMD SetUpCmd2 = {0,0};
-//   Variable xVar = {0,0,0,0};
-//   Variable yVar = {0,0,0,0};
-//   Variable zVar = {0,0,0,0};
-//   Variable x1Var = {0,0,0,0};
-//   Variable y1Var = {0,0,0,0};
-//   Variable z1Var = {0,0,0,0};
-//   VariableMap g00VarTableMapping[] = {
-//     {'X',&xVar},
-//     {'Y',&yVar},
-//     {'Z',&zVar},
-//     {NULL,NULL},
-//   };
-//   VariableMap g01VarTableMapping[] = {
-//     {'X',&x1Var},
-//     {'Y',&y1Var},
-//     {'Z',&z1Var},
-//     {NULL,NULL},
-//   };
-//   GCodeMapping GCode[] = {
-//     {"G00",g00VarTableMapping},
-//     {"G21"},
-//     {"G91"},
-//     {"G01",g01VarTableMapping},
-//     {NULL,NULL},
-//   };
-//   char *SetUp = "G21";
-//   char *line = "G00 Y101 X99.99 Z20";
-//   char *SetUp2 = "G91";
-//   char *line2 = "G01 Z10 Y20 X15";
-//   Try{
-//     SetUpCmd = decodeGcode(SetUp,GCode);
-//     cmd = decodeGcode(line,GCode);
-//     TEST_ASSERT_EQUAL('G',SetUpCmd.type);
-//     TEST_ASSERT_EQUAL(21,SetUpCmd.code);
-//     TEST_ASSERT_EQUAL('G',cmd.type);
-//     TEST_ASSERT_EQUAL(0,cmd.code);
-//     TEST_ASSERT_EQUAL('X',xVar.name);
-//     TEST_ASSERT_EQUAL(99.99,xVar.integer);
-//     TEST_ASSERT_EQUAL('Y',yVar.name);
-//     TEST_ASSERT_EQUAL(101,yVar.integer);
-//     TEST_ASSERT_EQUAL('Z',zVar.name);
-//     TEST_ASSERT_EQUAL(20,zVar.integer);
-//     Steps = CheckUnitSetUpCmd(SetUpCmd,g00VarTableMapping);
-//     TEST_ASSERT_EQUAL(31,*(Steps));
-//     TEST_ASSERT_EQUAL(31,*(Steps+1));
-//     TEST_ASSERT_EQUAL(6,*(Steps+2));
-//     Steps = CheckSetUpCmd(Steps,SetUpCmd2);
-//     TEST_ASSERT_EQUAL(31,*(Steps));
-//     TEST_ASSERT_EQUAL(31,*(Steps+1));
-//     TEST_ASSERT_EQUAL(6,*(Steps+2));
-//     SetUpCmd2 = decodeGcode(SetUp2,GCode);
-//     cmd1 = decodeGcode(line2,GCode);
-//     TEST_ASSERT_EQUAL('G',SetUpCmd2.type);
-//     TEST_ASSERT_EQUAL(91,SetUpCmd2.code);
-//     TEST_ASSERT_EQUAL('G',cmd1.type);
-//     TEST_ASSERT_EQUAL(1,cmd1.code);
-//     TEST_ASSERT_EQUAL('X',x1Var.name);
-//     TEST_ASSERT_EQUAL(15,x1Var.integer);
-//     TEST_ASSERT_EQUAL('Y',y1Var.name);
-//     TEST_ASSERT_EQUAL(20,y1Var.integer);
-//     TEST_ASSERT_EQUAL('Z',z1Var.name);
-//     TEST_ASSERT_EQUAL(10,z1Var.integer);
-//
-//
-//
-//   }Catch(ex){
-//     dumpException(ex);
-//   }
-// }

@@ -54,7 +54,7 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode);
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd);
 void getVariables(char *line,GCodeMapping *GCode);
 char *getValue(char *line,GCodeMapping *GCode);
-int *CheckUnitSetUpCmd(StoreCMD SetUpCmd,VariableMap *var);
+int *CheckUnitSetUpCmd(StoreCMD *SetUpCmd,VariableMap *var);
 int *convertBaseUnitToSteps(VariableMap *var,int baseType);
 int *CheckSetUpCmd(int *Steps,StoreCMD SetUpCmd2);
 //void CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var);

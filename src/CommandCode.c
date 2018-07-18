@@ -199,21 +199,18 @@ int *CheckSetUpCmd(int *Steps,StoreCMD SetUpCmd2)
 }
 
 
-int *CheckUnitSetUpCmd(StoreCMD SetUpCmd,VariableMap *var)
+int *CheckUnitSetUpCmd(StoreCMD *SetUpCmd,VariableMap *var)
 {
-  int *Steps;
-  // if(SetUpCmd.code == 91)
-  // {
-  //   ConfigRelaToAbso(var);
-  // }
-   if(SetUpCmd.code == 20 || SetUpCmd.code == 0)
+    int *Steps;
+   if(SetUpCmd->code == 20 || SetUpCmd->code == 0)
   {
     Steps = convertBaseUnitToSteps(var,0);
   }
-  else if(SetUpCmd.code == 21)
+  else if(SetUpCmd->code == 21)
   {
     Steps = convertBaseUnitToSteps(var,1);
   }
+  SetUpCmd->code = 0;
   return Steps;
 }
 
