@@ -23,7 +23,7 @@ struct StoreCMD{
 typedef struct Variable Variable;
 struct Variable {
   char name;
-  double integer;
+  double value;
   int fraction;
   int isValid;
 };
@@ -36,7 +36,9 @@ struct VariableMap{
 typedef struct GCodeMapping GCodeMapping;
 struct GCodeMapping{
   char *name;
+  int code;
   VariableMap *varMap;
+  //void *doOperation;
 };
 
 typedef struct XYZStep XYZStep;

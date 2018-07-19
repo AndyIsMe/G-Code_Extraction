@@ -25,7 +25,7 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
       throwException(ERROR_COMMAND,"Error!,no such command exist\n \
       Expect to be 'G' but was ",*line);
     }
-    GCode->name += 1;
+    // GCode->name += 1;
     line = getGcodeCommand(line,GCode,&cmd);
     getVariables(line,GCode);
     return cmd;
@@ -49,40 +49,97 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
     throwException(ERROR_CODE,"Error!,spotted more than 1 alphabet in a command\n \
     Expect to be an integer but was ",*line);
   }
-  for(i=0 ; i<2 ; i++)
+  while(isNumbers(*line))
   {
-    if(*line == *(GCode)->name)
-    {
       storecode[i] = *line;
       line += 1;
-      GCode->name += 1;
+      i++;
+  }
+  // while(j !=0)
+  // {
+  //   *GCode--;
+  //   GCode->name--;
+  //   j--;
+  // }
+  cmd->code = atoi(storecode);
+  while(GCode->name != NULL)
+  {
+    if(cmd->code == GCode->code)
+    {
+      while(j != 0)
+      {
+        *GCode--;
+        j--;
+      }
+      return line;
     }
     else
     {
-      i = -1;
       *GCode++;
-      GCode->name += 1;
       j++;
     }
-    if((GCode)->name == NULL)
-    {
-      Throw(createException("Error!,code either is not in the same group sharing the \
-      same variable or code does not exist\n",ERROR_CODE));
-    }
   }
-  while(j !=0)
-  {
-    *GCode--;
-    GCode->name--;
-    j--;
-  }
-  cmd->code = atoi(storecode);
+  Throw(createException("Error!,code either is not in the same group sharing the \
+  same variable or code does not exist\n",ERROR_CODE));
   // if(cmd->code >= 100)
   // {
   //   throwException(NOCODE,"Error!,no such code\n");
   // }
-  return line;
+  // return line;
 }
+
+// char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
+// {
+//   int i=0,j=0,w=0;
+//   char storecode[20] = {0};
+//   // while(*line != *(GCode)->name)
+//   // {
+//   //   *GCode++;
+//   //   w++;
+//   // }
+//   while(isEmpty(*line))
+//   {
+//     line += 1;
+//   }
+//   if(isAlpha(*line))
+//   {
+//     throwException(ERROR_CODE,"Error!,spotted more than 1 alphabet in a command\n \
+//     Expect to be an integer but was ",*line);
+//   }
+//   for(i=0 ; i<2 ; i++)
+//   {
+//     if(*line == *(GCode)->name)
+//     {
+//       storecode[i] = *line;
+//       line += 1;
+//       GCode->name += 1;
+//     }
+//     else
+//     {
+//       i = -1;
+//       *GCode++;
+//       GCode->name += 1;
+//       j++;
+//     }
+//     if((GCode)->name == NULL)
+//     {
+//       Throw(createException("Error!,code either is not in the same group sharing the \
+//       same variable or code does not exist\n",ERROR_CODE));
+//     }
+//   }
+//   while(j !=0)
+//   {
+//     *GCode--;
+//     GCode->name--;
+//     j--;
+//   }
+//   cmd->code = atoi(storecode);
+//   // if(cmd->code >= 100)
+//   // {
+//   //   throwException(NOCODE,"Error!,no such code\n");
+//   // }
+//   return line;
+// }
 void getVariables(char *line,GCodeMapping *GCode)
 {
 
@@ -185,7 +242,7 @@ char *getValue(char *line,GCodeMapping *GCode)
   }
 
   value = atof(storenum);
-  (GCode)->varMap->var->integer = value;
+  (GCode)->varMap->var->value = value;
   return line;
 
 }
@@ -223,7 +280,7 @@ int *convertBaseUnitToSteps(VariableMap *var,int baseType)
   {
     while(var->var!=NULL)
     {
-      Steps[i] = MM_TO_STEPS(var->var->integer);
+      Steps[i] = MM_TO_STEPS(var->var->value);
       *(var)++;
       i++;
     }
@@ -232,7 +289,7 @@ int *convertBaseUnitToSteps(VariableMap *var,int baseType)
   {
     while(var->var!=NULL)
     {
-      Steps[i] = INCH_TO_STEPS(var->var->integer);
+      Steps[i] = INCH_TO_STEPS(var->var->value);
       *(var)++;
       i++;
     }
