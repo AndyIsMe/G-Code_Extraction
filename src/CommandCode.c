@@ -5,6 +5,7 @@
 #include "error.h"
 
 int isInMM = 1;
+int isAbsolute = 1;
 
 StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
 {
@@ -41,7 +42,7 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
     }
     else
     {
-      throwException(ERROR_COMMAND,"Error!,no such command exist\n \
+      throwException(ERROR_COMMAND,"Error! No such command exist\n \
       Expect to be 'G' but was ",*line);
     }
     //Check code
@@ -51,7 +52,7 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
   }
   if(isAlpha(*line))
   {
-    throwException(ERROR_CODE,"Error!,spotted more than 1 alphabet in a command\n \
+    throwException(ERROR_CODE,"Error! Spotted more than 1 alphabet in a command\n \
     Expect to be an integer but was ",*line);
   }
   while(isNumbers(*line))
@@ -78,7 +79,7 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
       *GCode++;
     }
   }
-  Throw(createException("Error!,code either is not in the same group sharing the \
+  Throw(createException("Error! Code either is not in the same group sharing the \
   same variable or code does not exist\n",ERROR_CODE));
 }
 
@@ -90,7 +91,7 @@ void getVariables(char *line,GCodeMapping *GCode)
   const int len = strlen(line);
   if(isNumbers(*line))
   {
-    throwException(ERROR_VARIABLE,"Invalid variable,expect variable to be \n\
+    throwException(ERROR_VARIABLE,"Error! Invalid variable,expect variable to be \n\
     a character but was ",*line);
   }
   while(isEmpty(*line))
@@ -122,7 +123,7 @@ void getVariables(char *line,GCodeMapping *GCode)
         }
         else
         {
-          throwException(ERROR_DUPLICATE_VARIABLE,"Error,variable has been declared once",*line);
+          throwException(ERROR_DUPLICATE_VARIABLE,"Error! Variable has been declared once",*line);
         }
       }
       else{
@@ -136,7 +137,7 @@ void getVariables(char *line,GCodeMapping *GCode)
     }
   }
   else{
-    throwException(NOT_ALPHA,"Error!,expect it to be a character but was ",*line);
+    throwException(NOT_ALPHA,"Error! Expect it to be a character but was ",*line);
   }
   while(i!=0)
   {
@@ -146,7 +147,7 @@ void getVariables(char *line,GCodeMapping *GCode)
 }
   if(*line != NULL)
   {
-    throwException(VARIABLE_DOES_NOT_EXIST,"Error,variable does not exist in this command",*line);
+    throwException(VARIABLE_DOES_NOT_EXIST,"Error! Variable does not exist in this command",*line);
   }
 }
 
@@ -158,7 +159,7 @@ char *getValue(char *line,GCodeMapping *GCode)
   double value;
   if(isAlpha(*line))
   {
-    throwException(ERROR_VALUE,"Error!,expect integer since variable has been declared but was ",*line);
+    throwException(ERROR_VALUE,"Error! Expect integer since variable has been declared but was ",*line);
   }
   while(isEmpty(*line))
   {
@@ -176,7 +177,7 @@ char *getValue(char *line,GCodeMapping *GCode)
           validate_decimal = TRUE;
         }
         else{
-          throwException(ERROR_VALUE,"Value contains more than 1 ",*line);
+          throwException(ERROR_VALUE,"Error! Value contains more than 1 ",*line);
         }
       }
     storenum[i] = *line;
@@ -200,6 +201,18 @@ void handleG20or21(int code,VariableMap *table)
     isInMM = FALSE;
   }
 }
+
+void handleG90orG91(int code,Variable *table)
+{
+  if(code == 90)
+  {
+    isAbsolute = TRUE;
+  }
+  else
+  {
+    isAbsolute = TRUE;
+  }
+}
 void handleG00(int code,VariableMap *g00VarTableMapping)
 {
   if(isInMM == TRUE)
@@ -218,4 +231,5 @@ void handleG00(int code,VariableMap *g00VarTableMapping)
       *(g00VarTableMapping)++;
     }
   }
+
 }

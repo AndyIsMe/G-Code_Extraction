@@ -51,17 +51,14 @@ enum UnitType {MM_UNIT = 0,INCH_UNIT = 1}baseType;
 #define MM_TO_STEPS(x) ((x)*8)
 #define INCH_TO_STEPS(MM_TO_STEPS) ((MM_TO_STEPS)*8*0.0393701)
 
-//void convertBaseUnitToSteps(VariableMap *var,int baseType);
 void handleG00(int code,VariableMap *g00VarTableMapping);
 void handleG20or21(int code,VariableMap *table);
+void handleG90orG91(int code,Variable *table);
 StoreCMD decodeGcode(char *line,GCodeMapping *GCode);
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd);
 void getVariables(char *line,GCodeMapping *GCode);
 char *getValue(char *line,GCodeMapping *GCode);
-int *CheckUnitSetUpCmd(StoreCMD *SetUpCmd,VariableMap *var);
-int *convertBaseUnitToSteps(VariableMap *var,int baseType);
-int *CheckSetUpCmd(int *Steps,StoreCMD SetUpCmd2);
-//void CheckSetUpCmd(StoreCMD SetUpCmd,VariableMap *var);
+
 
 
 
