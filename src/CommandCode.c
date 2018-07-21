@@ -4,9 +4,28 @@
 #include "CException.h"
 #include "error.h"
 
+int isInMM = 1;
+
 StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
 {
   StoreCMD cmd;
+
+    line = getGcodeCommand(line,GCode,&cmd);
+    getVariables(line,GCode);
+    while(cmd.code != (GCode)->code)
+    {
+    *GCode++;
+    }
+    (GCode)->doOperation(GCode->code,GCode->varMap);
+    return cmd;
+}
+
+char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
+{
+  int i=0;
+  char storecode[20] = {0};
+  //Check name of the command
+  //Whether 'G' or 'M'
   while(isEmpty(*line))
   {
     line  += 1;
@@ -17,7 +36,7 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
   }
     if(*line == *(GCode)->name)
     {
-      cmd.type = *line;
+      cmd->type = *line;
       line += 1;
     }
     else
@@ -25,21 +44,7 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
       throwException(ERROR_COMMAND,"Error!,no such command exist\n \
       Expect to be 'G' but was ",*line);
     }
-    // GCode->name += 1;
-    line = getGcodeCommand(line,GCode,&cmd);
-    getVariables(line,GCode);
-    return cmd;
-}
-
-char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
-{
-  int i=0,j=0,w=0;
-  char storecode[20] = {0};
-  // while(*line != *(GCode)->name)
-  // {
-  //   *GCode++;
-  //   w++;
-  // }
+    //Check code
   while(isEmpty(*line))
   {
     line += 1;
@@ -66,80 +71,18 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
   {
     if(cmd->code == GCode->code)
     {
-      while(j != 0)
-      {
-        *GCode--;
-        j--;
-      }
       return line;
     }
     else
     {
       *GCode++;
-      j++;
     }
   }
   Throw(createException("Error!,code either is not in the same group sharing the \
   same variable or code does not exist\n",ERROR_CODE));
-  // if(cmd->code >= 100)
-  // {
-  //   throwException(NOCODE,"Error!,no such code\n");
-  // }
-  // return line;
 }
 
-// char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
-// {
-//   int i=0,j=0,w=0;
-//   char storecode[20] = {0};
-//   // while(*line != *(GCode)->name)
-//   // {
-//   //   *GCode++;
-//   //   w++;
-//   // }
-//   while(isEmpty(*line))
-//   {
-//     line += 1;
-//   }
-//   if(isAlpha(*line))
-//   {
-//     throwException(ERROR_CODE,"Error!,spotted more than 1 alphabet in a command\n \
-//     Expect to be an integer but was ",*line);
-//   }
-//   for(i=0 ; i<2 ; i++)
-//   {
-//     if(*line == *(GCode)->name)
-//     {
-//       storecode[i] = *line;
-//       line += 1;
-//       GCode->name += 1;
-//     }
-//     else
-//     {
-//       i = -1;
-//       *GCode++;
-//       GCode->name += 1;
-//       j++;
-//     }
-//     if((GCode)->name == NULL)
-//     {
-//       Throw(createException("Error!,code either is not in the same group sharing the \
-//       same variable or code does not exist\n",ERROR_CODE));
-//     }
-//   }
-//   while(j !=0)
-//   {
-//     *GCode--;
-//     GCode->name--;
-//     j--;
-//   }
-//   cmd->code = atoi(storecode);
-//   // if(cmd->code >= 100)
-//   // {
-//   //   throwException(NOCODE,"Error!,no such code\n");
-//   // }
-//   return line;
-// }
+
 void getVariables(char *line,GCodeMapping *GCode)
 {
 
@@ -246,53 +189,33 @@ char *getValue(char *line,GCodeMapping *GCode)
   return line;
 
 }
-
-int *CheckSetUpCmd(int *Steps,StoreCMD SetUpCmd2)
+void handleG20or21(int code,VariableMap *table)
 {
-  if(SetUpCmd2.code == 90 || SetUpCmd2.code == 0 || SetUpCmd2.code == 91)
+  if(code == 20)
   {
-    return Steps;
+    isInMM = TRUE;
+  }
+  else
+  {
+    isInMM = FALSE;
   }
 }
-
-
-int *CheckUnitSetUpCmd(StoreCMD *SetUpCmd,VariableMap *var)
+void handleG00(int code,VariableMap *g00VarTableMapping)
 {
-    int *Steps;
-   if(SetUpCmd->code == 20 || SetUpCmd->code == 0)
+  if(isInMM == TRUE)
   {
-    Steps = convertBaseUnitToSteps(var,0);
+        while(g00VarTableMapping->var!=NULL)
+        {
+          g00VarTableMapping->var->steps = MM_TO_STEPS(g00VarTableMapping->var->value);
+          *(g00VarTableMapping)++;
+        }
   }
-  else if(SetUpCmd->code == 21)
+  else
   {
-    Steps = convertBaseUnitToSteps(var,1);
-  }
-  SetUpCmd->code = 0;
-  return Steps;
-}
-
-int *convertBaseUnitToSteps(VariableMap *var,int baseType)
-{
-  XYZStep xyzStep;
-  static int Steps[10];
-  int i=0;
-  if(baseType == MM_UNIT)
-  {
-    while(var->var!=NULL)
+    while(g00VarTableMapping->var!=NULL)
     {
-      Steps[i] = MM_TO_STEPS(var->var->value);
-      *(var)++;
-      i++;
+      g00VarTableMapping->var->steps = INCH_TO_STEPS(g00VarTableMapping->var->value);
+      *(g00VarTableMapping)++;
     }
   }
-  if(baseType == INCH_UNIT)
-  {
-    while(var->var!=NULL)
-    {
-      Steps[i] = INCH_TO_STEPS(var->var->value);
-      *(var)++;
-      i++;
-    }
-  }
-  return Steps;
 }

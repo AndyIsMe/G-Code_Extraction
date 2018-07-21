@@ -24,7 +24,7 @@ typedef struct Variable Variable;
 struct Variable {
   char name;
   double value;
-  int fraction;
+  int steps;
   int isValid;
 };
 typedef struct VariableMap VariableMap;
@@ -38,7 +38,7 @@ struct GCodeMapping{
   char *name;
   int code;
   VariableMap *varMap;
-  //void *doOperation;
+  void (*doOperation)(code, varMap);
 };
 
 typedef struct XYZStep XYZStep;
@@ -52,6 +52,8 @@ enum UnitType {MM_UNIT = 0,INCH_UNIT = 1}baseType;
 #define INCH_TO_STEPS(MM_TO_STEPS) ((MM_TO_STEPS)*8*0.0393701)
 
 //void convertBaseUnitToSteps(VariableMap *var,int baseType);
+void handleG00(int code,VariableMap *g00VarTableMapping);
+void handleG20or21(int code,VariableMap *table);
 StoreCMD decodeGcode(char *line,GCodeMapping *GCode);
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd);
 void getVariables(char *line,GCodeMapping *GCode);
