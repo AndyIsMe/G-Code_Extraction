@@ -12,6 +12,10 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
   StoreCMD cmd;
 
     line = getGcodeCommand(line,GCode,&cmd);
+    while(cmd.code != (GCode)->code)
+    {
+    *GCode++;
+    }
     getVariables(line,GCode);
     while(cmd.code != (GCode)->code)
     {
@@ -219,16 +223,30 @@ void handleG00(int code,VariableMap *g00VarTableMapping)
   {
         while(g00VarTableMapping->var!=NULL)
         {
-          g00VarTableMapping->var->steps = MM_TO_STEPS(g00VarTableMapping->var->value);
-          *(g00VarTableMapping)++;
+          if(g00VarTableMapping->var->name == 'F')
+          {
+            *(g00VarTableMapping)++;
+          }
+          else
+          {
+            g00VarTableMapping->var->steps = MM_TO_STEPS(g00VarTableMapping->var->value);
+            *(g00VarTableMapping)++;
+          }
         }
   }
   else
   {
     while(g00VarTableMapping->var!=NULL)
     {
-      g00VarTableMapping->var->steps = INCH_TO_STEPS(g00VarTableMapping->var->value);
-      *(g00VarTableMapping)++;
+      if(g00VarTableMapping->var->name == 'F')
+      {
+        *(g00VarTableMapping)++;
+      }
+      else
+      {
+        g00VarTableMapping->var->steps = INCH_TO_STEPS(g00VarTableMapping->var->value);
+        *(g00VarTableMapping)++;
+      }
     }
   }
 

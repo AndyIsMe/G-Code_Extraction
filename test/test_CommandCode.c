@@ -23,7 +23,7 @@ void test_G00_expect_G0_cmd_X_var_100_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00 X100";
@@ -55,7 +55,7 @@ void test_space_G00_expect_G0_cmd_X_var_100_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = " G00 X100";
@@ -87,7 +87,7 @@ void test_E00_expect_throw_exception_error_command(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL},
   };
   char *line = "E00 X100";
@@ -108,7 +108,7 @@ void test_G90_expect_G90_cmd(void)
   StoreCMD SetUpcmd = {0,0};
 
   GCodeMapping GCode90[] = {
-    {"G",90,NULL,handleG90orG91},
+    {.name = "G",.code = 90,.varMap = NULL,.doOperation = handleG90orG91},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G90 ";
@@ -137,7 +137,7 @@ void test_G_space_00_expect_G0_cmd_X_var_100_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G 00 X100";
@@ -170,7 +170,7 @@ void test_GE00_expect_throw_exception_error_code(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "GE00 X100";
@@ -192,21 +192,23 @@ void test_G001_expect_G1_cmd_X_var_100_val(void)
   Variable xVar = {0,0,0,0};
   Variable yVar = {0,0,0,0};
   Variable zVar = {0,0,0,0};
+  Variable fVar = {0,0,0,0};
 
-  VariableMap g00VarTableMapping[] = {
+  VariableMap g01VarTableMapping[] = {
     {'X',&xVar},
     {'Y',&yVar},
     {'Z',&zVar},
+    {'F',&fVar},
     {NULL,NULL},
   };
-  GCodeMapping GCode00[] = {
-    {"G",1,g00VarTableMapping,handleG00},
+  GCodeMapping GCode001[] = {
+    {.name = "G",.code = 1,.varMap = g01VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G001 X100";
 
   Try{
-    cmd = decodeGcode(line,GCode00);
+    cmd = decodeGcode(line,GCode001);
     TEST_ASSERT_EQUAL('G',cmd.type);
     TEST_ASSERT_EQUAL(1,cmd.code);
     TEST_ASSERT_EQUAL('X',xVar.name);
@@ -233,7 +235,7 @@ void test_G00_XY100_expect_throw_exception_error_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00 XY100";
@@ -263,7 +265,7 @@ void test_G00_expect_G0_cmd_X_var_101_value_Y_var_999_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00 X101 Y999";
@@ -298,7 +300,7 @@ void test_G00_X101_YZ999_expect_throw_exception_error_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00 X101 YZ999";
@@ -327,7 +329,7 @@ void test_G00_X101_YZ999_expect_throw_exception_error_duplicate_variable(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00 X101 X999";
@@ -356,7 +358,7 @@ void test_G00_expect_G0_cmd_X_var_999_value_Y_var_101_value_Z_var_20_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00 Y101 X999 Z20";
@@ -370,6 +372,50 @@ void test_G00_expect_G0_cmd_X_var_999_value_Y_var_101_value_Z_var_20_value(void)
     TEST_ASSERT_EQUAL(101,yVar.value);
     TEST_ASSERT_EQUAL('Z',zVar.name);
     TEST_ASSERT_EQUAL(20,zVar.value);
+
+  }Catch(ex){
+    dumpException(ex);
+  }
+}
+
+void test_G001_expect_G1_cmd_X_var_100_val_Y_var_20_val_Z_var_30_val_F_var_200_val(void)
+{
+  CEXCEPTION_T ex;
+  StoreCMD cmd = {0,0};
+  Variable xVar = {0,0,0,0};
+  Variable yVar = {0,0,0,0};
+  Variable zVar = {0,0,0,0};
+  Variable fVar = {0,0,0,0};
+
+  VariableMap g01VarTableMapping[] = {
+    {'X',&xVar},
+    {'Y',&yVar},
+    {'Z',&zVar},
+    {'F',&fVar},
+    {NULL,NULL},
+  };
+  GCodeMapping GCode001[] = {
+    {.name = "G",.code = 1,.varMap = g01VarTableMapping,.doOperation = handleG00},
+    {NULL,NULL,NULL,NULL},
+  };
+  char *line = "G001 X100 Y20 Z30 F200";
+
+  Try{
+    cmd = decodeGcode(line,GCode001);
+    TEST_ASSERT_EQUAL('G',cmd.type);
+    TEST_ASSERT_EQUAL(1,cmd.code);
+    TEST_ASSERT_EQUAL('X',xVar.name);
+    TEST_ASSERT_EQUAL(100,xVar.value);
+    TEST_ASSERT_EQUAL('Y',yVar.name);
+    TEST_ASSERT_EQUAL(20,yVar.value);
+    TEST_ASSERT_EQUAL('Z',zVar.name);
+    TEST_ASSERT_EQUAL(30,zVar.value);
+    TEST_ASSERT_EQUAL('F',fVar.name);
+    TEST_ASSERT_EQUAL(200,fVar.value);
+    TEST_ASSERT_EQUAL(800,xVar.steps);
+    TEST_ASSERT_EQUAL(160,yVar.steps);
+    TEST_ASSERT_EQUAL(240,zVar.steps);
+    TEST_ASSERT_EQUAL(0,fVar.steps);
 
   }Catch(ex){
     dumpException(ex);
@@ -391,7 +437,7 @@ void test_G00_expect_G0_cmd_Y_var_101_value_X_var_999_value_Z_var_21_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00Y101X999Z21";
@@ -426,7 +472,7 @@ void test_G00_expect_Y_var_101_throw_exception_error_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00Y101XU999Z21";
@@ -456,7 +502,7 @@ void test_G00_expect_throw_exception_variable_does_not_exist(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00C101X999Z21";
@@ -484,7 +530,7 @@ void test_G00_expect_G0_cmd_X_var_99_point_99_value_Y_var_101_value_Z_var_20_val
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00 Y101 X99.99 Z20";
@@ -521,7 +567,7 @@ void test_G00_Y101_X99_point_99_point_5_expect_throw_exception_error_value(void)
     {NULL,NULL},
   };
   GCodeMapping GCode00[] = {
-    {"G",0,g00VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G00 Y101 X99.99.5 Z20";
@@ -550,8 +596,8 @@ void test_G20_G00_Y101_X99_point_99_point_5_expect_value_from_MM_to_Steps(void)
     {NULL,NULL},
   };
   GCodeMapping GCode[] = {
-    {"G",0,g00VarTableMapping,handleG00},
-    {"G",20,NULL,handleG20or21},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
+    {.name = "G",.code = 20,.varMap = NULL,.doOperation = handleG20or21},
     {NULL,NULL,NULL,NULL},
   };
   char *SetUp = "G20";
@@ -590,8 +636,8 @@ void test_G21_G00_Y101_X99_point_99_point_5_expect_value_from_INCH_to_Steps(void
     {NULL,NULL},
   };
   GCodeMapping GCode[] = {
-    {"G",0,g00VarTableMapping,handleG00},
-    {"G",21,NULL,handleG20or21},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
+    {.name = "G",.code = 21,.varMap = NULL,.doOperation = handleG20or21},
     {NULL,NULL,NULL,NULL},
   };
   char *SetUp = "G21";
@@ -627,6 +673,7 @@ void test_G21_G00_G91_G01_cmd_expect_absolute_steps(void)
   Variable x1Var = {0,0,0,0};
   Variable y1Var = {0,0,0,0};
   Variable z1Var = {0,0,0,0};
+  Variable fVar = {0,0,0,0};
   VariableMap g00VarTableMapping[] = {
     {'X',&xVar},
     {'Y',&yVar},
@@ -637,19 +684,20 @@ void test_G21_G00_G91_G01_cmd_expect_absolute_steps(void)
     {'X',&x1Var},
     {'Y',&y1Var},
     {'Z',&z1Var},
+    {'F',&fVar},
     {NULL,NULL},
   };
   GCodeMapping GCode[] = {
-    {"G",0,g00VarTableMapping,handleG00},
-    {"G",21,NULL,handleG20or21},
-    {"G",91,NULL,handleG90orG91},
-    {"G",1,g01VarTableMapping,handleG00},
+    {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
+    {.name = "G",.code = 21,.varMap = NULL,.doOperation = handleG20or21},
+    {.name = "G",.code = 91,.varMap = NULL,.doOperation = handleG90orG91},
+    {.name = "G",.code = 1,.varMap = g01VarTableMapping,.doOperation = handleG00},
     {NULL,NULL,NULL,NULL},
   };
   char *SetUp = "G21";
   char *line = "G00 Y101 X99.99 Z20";
   char *SetUp2 = "G91";
-  char *line2 = "G01 Z10 Y20 X15";
+  char *line2 = "G01 Z10 Y20 X15 F100";
   Try{
     cmd = decodeGcode(SetUp,GCode);
     cmd = decodeGcode(line,GCode);
@@ -674,9 +722,12 @@ void test_G21_G00_G91_G01_cmd_expect_absolute_steps(void)
     TEST_ASSERT_EQUAL(20,y1Var.value);
     TEST_ASSERT_EQUAL('Z',z1Var.name);
     TEST_ASSERT_EQUAL(10,z1Var.value);
-    TEST_ASSERT_EQUAL(120,x1Var.steps);
-    TEST_ASSERT_EQUAL(160,y1Var.steps);
-    TEST_ASSERT_EQUAL(80,z1Var.steps);
+    TEST_ASSERT_EQUAL('F',fVar.name);
+    TEST_ASSERT_EQUAL(100,fVar.value);
+    TEST_ASSERT_EQUAL(4,x1Var.steps);
+    TEST_ASSERT_EQUAL(6,y1Var.steps);
+    TEST_ASSERT_EQUAL(3,z1Var.steps);
+    TEST_ASSERT_EQUAL(0,fVar.steps);
   }Catch(ex){
     dumpException(ex);
   }

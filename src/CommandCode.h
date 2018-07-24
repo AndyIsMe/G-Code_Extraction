@@ -41,12 +41,6 @@ struct GCodeMapping{
   void (*doOperation)(code, varMap);
 };
 
-typedef struct XYZStep XYZStep;
-struct XYZStep{
-  int XStep;
-  int YStep;
-  int ZStep;
-};
 enum UnitType {MM_UNIT = 0,INCH_UNIT = 1}baseType;
 #define MM_TO_STEPS(x) ((x)*8)
 #define INCH_TO_STEPS(MM_TO_STEPS) ((MM_TO_STEPS)*8*0.0393701)
