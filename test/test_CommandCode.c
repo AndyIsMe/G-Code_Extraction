@@ -4,6 +4,7 @@
 #include "Exception.h"
 #include "CExceptionConfig.h"
 #include "CException.h"
+#include "mock_XYZSteps.h"
 
 void setUp(void){}
 void tearDown(void){}
@@ -395,7 +396,7 @@ void test_G001_expect_G1_cmd_X_var_100_val_Y_var_20_val_Z_var_30_val_F_var_200_v
     {NULL,NULL},
   };
   GCodeMapping GCode001[] = {
-    {.name = "G",.code = 1,.varMap = g01VarTableMapping,.doOperation = handleG00},
+    {.name = "G",.code = 1,.varMap = g01VarTableMapping,.doOperation = handleG01},
     {NULL,NULL,NULL,NULL},
   };
   char *line = "G001 X100 Y20 Z30 F200";
@@ -691,7 +692,7 @@ void test_G21_G00_G91_G01_cmd_expect_absolute_steps(void)
     {.name = "G",.code = 0,.varMap = g00VarTableMapping,.doOperation = handleG00},
     {.name = "G",.code = 21,.varMap = NULL,.doOperation = handleG20or21},
     {.name = "G",.code = 91,.varMap = NULL,.doOperation = handleG90orG91},
-    {.name = "G",.code = 1,.varMap = g01VarTableMapping,.doOperation = handleG00},
+    {.name = "G",.code = 1,.varMap = g01VarTableMapping,.doOperation = handleG01},
     {NULL,NULL,NULL,NULL},
   };
   char *SetUp = "G21";

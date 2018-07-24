@@ -4,6 +4,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "Error.h"
+#include "XYZSteps.h"
 
 
 #define isAlpha(x)      (((x) >= 'a' && (x) <= 'z') || ((x) >= 'A' && (x) <= 'Z'))
@@ -46,6 +47,7 @@ enum UnitType {MM_UNIT = 0,INCH_UNIT = 1}baseType;
 #define INCH_TO_STEPS(MM_TO_STEPS) ((MM_TO_STEPS)*8*0.0393701)
 
 void handleG00(int code,VariableMap *g00VarTableMapping);
+void handleG01(int code,VariableMap *g01VarTableMapping);
 void handleG20or21(int code,VariableMap *table);
 void handleG90orG91(int code,Variable *table);
 StoreCMD decodeGcode(char *line,GCodeMapping *GCode);

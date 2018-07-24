@@ -223,29 +223,55 @@ void handleG00(int code,VariableMap *g00VarTableMapping)
   {
         while(g00VarTableMapping->var!=NULL)
         {
-          if(g00VarTableMapping->var->name == 'F')
-          {
-            *(g00VarTableMapping)++;
-          }
-          else
-          {
             g00VarTableMapping->var->steps = MM_TO_STEPS(g00VarTableMapping->var->value);
+            // StoreXYZSteps(g00VarTableMapping->var->steps);
             *(g00VarTableMapping)++;
-          }
+
         }
   }
   else
   {
     while(g00VarTableMapping->var!=NULL)
     {
-      if(g00VarTableMapping->var->name == 'F')
-      {
+        g00VarTableMapping->var->steps = INCH_TO_STEPS(g00VarTableMapping->var->value);
+        // StoreXYZSteps(g00VarTableMapping->var->steps);
         *(g00VarTableMapping)++;
+
+
+    }
+  }
+
+}
+
+void handleG01(int code,VariableMap *g01VarTableMapping)
+{
+  if(isInMM == TRUE)
+  {
+        while(g01VarTableMapping->var!=NULL)
+        {
+          if(g01VarTableMapping->var->name == 'F')
+          {
+            *(g01VarTableMapping)++;
+          }
+          else
+          {
+            g01VarTableMapping->var->steps = MM_TO_STEPS(g01VarTableMapping->var->value);
+            *(g01VarTableMapping)++;
+          }
+        }
+  }
+  else
+  {
+    while(g01VarTableMapping->var!=NULL)
+    {
+      if(g01VarTableMapping->var->name == 'F')
+      {
+        *(g01VarTableMapping)++;
       }
       else
       {
-        g00VarTableMapping->var->steps = INCH_TO_STEPS(g00VarTableMapping->var->value);
-        *(g00VarTableMapping)++;
+        g01VarTableMapping->var->steps = INCH_TO_STEPS(g01VarTableMapping->var->value);
+        *(g01VarTableMapping)++;
       }
     }
   }
