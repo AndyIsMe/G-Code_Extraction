@@ -3,6 +3,7 @@
 #include "Exception.h"
 #include "CException.h"
 #include "error.h"
+#include "XYZSteps.h"
 
 int isInMM = 1;
 int isAbsolute = 1;
@@ -22,6 +23,7 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode)
     *GCode++;
     }
     (GCode)->doOperation(GCode->code,GCode->varMap);
+
     return cmd;
 }
 
@@ -165,7 +167,7 @@ char *getValue(char *line,GCodeMapping *GCode)
   {
     throwException(ERROR_VALUE,"Error! Expect integer since variable has been declared but was ",*line);
   }
-  while(isEmpty(*line))
+  while(isEmpty(*line) || isDash(*line))
   {
     line += 1;
   }
@@ -196,7 +198,7 @@ char *getValue(char *line,GCodeMapping *GCode)
 }
 void handleG20or21(int code,VariableMap *table)
 {
-  if(code == 20)
+  if(code == 20 || code == 70)
   {
     isInMM = TRUE;
   }
@@ -219,6 +221,7 @@ void handleG90orG91(int code,Variable *table)
 }
 void handleG00(int code,VariableMap *g00VarTableMapping)
 {
+  int i=0;
   if(isInMM == TRUE)
   {
         while(g00VarTableMapping->var!=NULL)
@@ -226,7 +229,7 @@ void handleG00(int code,VariableMap *g00VarTableMapping)
             g00VarTableMapping->var->steps = MM_TO_STEPS(g00VarTableMapping->var->value);
             // StoreXYZSteps(g00VarTableMapping->var->steps);
             *(g00VarTableMapping)++;
-
+            i++;
         }
   }
   else
@@ -236,17 +239,31 @@ void handleG00(int code,VariableMap *g00VarTableMapping)
         g00VarTableMapping->var->steps = INCH_TO_STEPS(g00VarTableMapping->var->value);
         // StoreXYZSteps(g00VarTableMapping->var->steps);
         *(g00VarTableMapping)++;
-
+        i++;
 
     }
   }
-
+  while(i != 0)
+  {
+    *(g00VarTableMapping)--;
+    i--;
+  }
+  // printf("%d\n",g00VarTableMapping->var->isValid);
+  int steps;
+  for(i=0;i<3;i++)
+  {
+    steps = g00VarTableMapping->var->steps;
+    SetUpMotorInfo(NULL,steps);
+    *g00VarTableMapping++;
+  }
 }
 
 void handleG01(int code,VariableMap *g01VarTableMapping)
 {
   int feedrate = 0;
   int i=0;
+  feedrate = Findfeedrate('F',g01VarTableMapping);
+
   if(isInMM == TRUE)
   {
         while(g01VarTableMapping->var!=NULL)
@@ -257,55 +274,64 @@ void handleG01(int code,VariableMap *g01VarTableMapping)
           // steps/min  = steps/mm * mm/min
           if(g01VarTableMapping->var->name == 'F')
           {
-            feedrate = g01VarTableMapping->var->value;
             *(g01VarTableMapping)++;
             i++;
           }
           else
           {
-              g01VarTableMapping->var->steps = MM_TO_STEPS(g01VarTableMapping->var->value);
-              *(g01VarTableMapping)++;
-              i++;
+            g01VarTableMapping->var->steps = MM_TO_STEPS(g01VarTableMapping->var->value) * feedrate;
+            *(g01VarTableMapping)++;
+            i++;
           }
-        }
-        while(i != 0 && feedrate != 0)
-        {
-          *(g01VarTableMapping)--;
-          i--;
-        }
-        while(feedrate != 0 && g01VarTableMapping->var!=NULL)
-        {
-          g01VarTableMapping->var->steps = g01VarTableMapping->var->steps * feedrate;
-          *(g01VarTableMapping)++;
         }
   }
   else
   {
     while(g01VarTableMapping->var!=NULL)
     {
-      if(g01VarTableMapping->var->name == 'F')
-      {
-        feedrate = g01VarTableMapping->var->value;
-        *(g01VarTableMapping)++;
-        i++;
-      }
-      else
-      {
-          g01VarTableMapping->var->steps = INCH_TO_STEPS(g01VarTableMapping->var->value);
+        if(g01VarTableMapping->var->name == 'F')
+        {
           *(g01VarTableMapping)++;
           i++;
-      }
-    }
-    while(i != 0 && feedrate != 0)
-    {
-      *(g01VarTableMapping)--;
-      i--;
-    }
-    while(feedrate != 0 && g01VarTableMapping->var!=NULL)
-    {
-      g01VarTableMapping->var->steps = g01VarTableMapping->var->steps * feedrate;
-      *(g01VarTableMapping)++;
+        }
+        else
+        {
+          g01VarTableMapping->var->steps = INCH_TO_STEPS(g01VarTableMapping->var->value) * feedrate;
+          *(g01VarTableMapping)++;
+          i++;
+        }
+
     }
   }
+  while(i != 0)
+  {
+    *(g01VarTableMapping)--;
+    i--;
+  }
 
+  int steps;
+  for(i=0;i<3;i++)
+  {
+    steps = g01VarTableMapping->var->steps;
+    SetUpMotorInfo(NULL,steps);
+    *g01VarTableMapping++;
+  }
+
+}
+
+int Findfeedrate(char Fvar,VariableMap *var)
+{
+  int feedrateVal;
+  while(var->var != NULL)
+  {
+    if(Fvar == var->var->name)
+    {
+      int feedrateVal = var->var->value;
+      return feedrateVal;
+    }
+    else
+    {
+      *var++;
+    }
+  }
 }
