@@ -413,9 +413,9 @@ void test_G001_expect_G1_cmd_X_var_100_val_Y_var_20_val_Z_var_30_val_F_var_200_v
     TEST_ASSERT_EQUAL(30,zVar.value);
     TEST_ASSERT_EQUAL('F',fVar.name);
     TEST_ASSERT_EQUAL(200,fVar.value);
-    TEST_ASSERT_EQUAL(800,xVar.steps);
-    TEST_ASSERT_EQUAL(160,yVar.steps);
-    TEST_ASSERT_EQUAL(240,zVar.steps);
+    TEST_ASSERT_EQUAL(160000,xVar.steps);
+    TEST_ASSERT_EQUAL(32000,yVar.steps);
+    TEST_ASSERT_EQUAL(48000,zVar.steps);
     TEST_ASSERT_EQUAL(0,fVar.steps);
 
   }Catch(ex){
@@ -725,9 +725,9 @@ void test_G21_G00_G91_G01_cmd_expect_absolute_steps(void)
     TEST_ASSERT_EQUAL(10,z1Var.value);
     TEST_ASSERT_EQUAL('F',fVar.name);
     TEST_ASSERT_EQUAL(100,fVar.value);
-    TEST_ASSERT_EQUAL(4,x1Var.steps);
-    TEST_ASSERT_EQUAL(6,y1Var.steps);
-    TEST_ASSERT_EQUAL(3,z1Var.steps);
+    TEST_ASSERT_EQUAL(400,x1Var.steps);
+    TEST_ASSERT_EQUAL(600,y1Var.steps);
+    TEST_ASSERT_EQUAL(300,z1Var.steps);
     TEST_ASSERT_EQUAL(0,fVar.steps);
   }Catch(ex){
     dumpException(ex);

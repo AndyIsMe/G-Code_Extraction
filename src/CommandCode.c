@@ -245,19 +245,38 @@ void handleG00(int code,VariableMap *g00VarTableMapping)
 
 void handleG01(int code,VariableMap *g01VarTableMapping)
 {
+  int feedrate = 0;
+  int i=0;
   if(isInMM == TRUE)
   {
         while(g01VarTableMapping->var!=NULL)
         {
+          //Feed Rate is per min
+          //E.g. : F20 in mm => 20mm/min
+          //E.g. : F30 in inch => 30inch/min
+          // steps/min  = steps/mm * mm/min
           if(g01VarTableMapping->var->name == 'F')
           {
+            feedrate = g01VarTableMapping->var->value;
             *(g01VarTableMapping)++;
+            i++;
           }
           else
           {
-            g01VarTableMapping->var->steps = MM_TO_STEPS(g01VarTableMapping->var->value);
-            *(g01VarTableMapping)++;
+              g01VarTableMapping->var->steps = MM_TO_STEPS(g01VarTableMapping->var->value);
+              *(g01VarTableMapping)++;
+              i++;
           }
+        }
+        while(i != 0 && feedrate != 0)
+        {
+          *(g01VarTableMapping)--;
+          i--;
+        }
+        while(feedrate != 0 && g01VarTableMapping->var!=NULL)
+        {
+          g01VarTableMapping->var->steps = g01VarTableMapping->var->steps * feedrate;
+          *(g01VarTableMapping)++;
         }
   }
   else
@@ -266,13 +285,26 @@ void handleG01(int code,VariableMap *g01VarTableMapping)
     {
       if(g01VarTableMapping->var->name == 'F')
       {
+        feedrate = g01VarTableMapping->var->value;
         *(g01VarTableMapping)++;
+        i++;
       }
       else
       {
-        g01VarTableMapping->var->steps = INCH_TO_STEPS(g01VarTableMapping->var->value);
-        *(g01VarTableMapping)++;
+          g01VarTableMapping->var->steps = INCH_TO_STEPS(g01VarTableMapping->var->value);
+          *(g01VarTableMapping)++;
+          i++;
       }
+    }
+    while(i != 0 && feedrate != 0)
+    {
+      *(g01VarTableMapping)--;
+      i--;
+    }
+    while(feedrate != 0 && g01VarTableMapping->var!=NULL)
+    {
+      g01VarTableMapping->var->steps = g01VarTableMapping->var->steps * feedrate;
+      *(g01VarTableMapping)++;
     }
   }
 
