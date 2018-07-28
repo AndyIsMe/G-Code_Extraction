@@ -67,12 +67,6 @@ char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd)
       line += 1;
       i++;
   }
-  // while(j !=0)
-  // {
-  //   *GCode--;
-  //   GCode->name--;
-  //   j--;
-  // }
   cmd->code = atoi(storecode);
   while(GCode->name != NULL)
   {
@@ -132,13 +126,10 @@ void getVariables(char *line,GCodeMapping *GCode)
           throwException(ERROR_DUPLICATE_VARIABLE,"Error! Variable has been declared once",*line);
         }
       }
-      else{
-      *(GCode)->varMap++;
-      i++;
-      // if(*line != (GCode)->varMap->name && ((GCode)->varMap->name)==NULL)
-      // {
-      //   throwException(VARIABLE_DOES_NOT_EXIST,"Error,variable does not exist in this command",*line);
-      // }
+      else
+      {
+        *(GCode)->varMap++;
+        i++;
       }
     }
   }
@@ -227,7 +218,6 @@ void handleG00(int code,VariableMap *g00VarTableMapping)
         while(g00VarTableMapping->var!=NULL)
         {
             g00VarTableMapping->var->steps = MM_TO_STEPS(g00VarTableMapping->var->value);
-            // StoreXYZSteps(g00VarTableMapping->var->steps);
             *(g00VarTableMapping)++;
             i++;
         }
@@ -237,7 +227,6 @@ void handleG00(int code,VariableMap *g00VarTableMapping)
     while(g00VarTableMapping->var!=NULL)
     {
         g00VarTableMapping->var->steps = INCH_TO_STEPS(g00VarTableMapping->var->value);
-        // StoreXYZSteps(g00VarTableMapping->var->steps);
         *(g00VarTableMapping)++;
         i++;
 
@@ -248,7 +237,6 @@ void handleG00(int code,VariableMap *g00VarTableMapping)
     *(g00VarTableMapping)--;
     i--;
   }
-  // printf("%d\n",g00VarTableMapping->var->isValid);
   int steps;
   for(i=0;i<3;i++)
   {
