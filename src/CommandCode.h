@@ -4,6 +4,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "Error.h"
+#include "ctype.h"
 
 
 
@@ -56,6 +57,7 @@ StoreCMD decodeGcode(char *line,GCodeMapping *GCode);
 char *getGcodeCommand(char *line,GCodeMapping *GCode,StoreCMD *cmd);
 void getVariables(char *line,GCodeMapping *GCode);
 char *getValue(char *line,GCodeMapping *GCode);
+int StoreSteps(VariableMap *var);
 
 
 
